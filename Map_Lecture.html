@@ -16,6 +16,7 @@
 </head>
 <body>
   <script id="mapbox-key" type="text/plain">__MAPBOX_KEY__</script>
+  <script id="heat-enschede" type="application/json">__HEAT_ENSCHEDE__</script>
   <div id="map"></div>
   <script>
     mapboxgl.accessToken = document.getElementById('mapbox-key').textContent;
@@ -74,6 +75,35 @@
             },
             labelLayerId
         );
+      
+      map.addSource("heat-grid", {
+        type: "geojson",
+        data: JSON.parse(document.getElementById("heat-enschede").textContent)
+      });
+
+      map.addLayer({
+      id: "heat-hex",
+      type: "fill-extrusion",
+      source: "heat-grid",
+      paint: {
+        "fill-extrusion-color": [
+          "interpolate",
+          ["linear"],
+          ["get", "Stats.MEDIAN"],
+          39, "#dfba41",
+          52, "#ff4e39"
+        ],
+        "fill-extrusion-height": [
+          "interpolate",
+          ["linear"],
+          ["get", "Stats.MEDIAN"],
+          39, 10,
+          52, 300
+        ],
+        "fill-extrusion-opacity": 0.9
+      }
+          
+        });
     });
     
 

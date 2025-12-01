@@ -1,5 +1,6 @@
 import streamlit as st
 import pandas as pd
+import geopandas as gpd
 import numpy as np
 import streamlit.components.v1 as components
 import plotly.express as px
@@ -25,7 +26,7 @@ MAPBOX_API_KEY = st.secrets.get("MAPBOX_API_KEY")
 if MAPBOX_API_KEY is None:
     st.error("Mapbox token not configured")
     
-
+HEAT_ENSCHEDE = gpd.read_file("./data/Heat_Enschede.json")
 
 # =======================
 # SIDEBAR
@@ -46,6 +47,7 @@ with open("./Map_Lecture.html", 'r', encoding="utf-8") as f:
             mapbox_html = f.read()
 
 mapbox_html = mapbox_html.replace("__MAPBOX_KEY__", MAPBOX_API_KEY)
+mapbox_html = mapbox_html.replace("__HEAT_ENSCHEDE__", HEAT_ENSCHEDE.to_json())
 
 components.html(
     mapbox_html,

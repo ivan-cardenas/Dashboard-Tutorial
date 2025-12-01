@@ -74,7 +74,7 @@ font="sans serif"
 ```
 
 ---
-## :exclamation:  ==Make it your own! Change the colors and the font==
+## :exclamation:  Make it your own! Change the colors and the font
 
 #### You can see more configuration options in the [docs](https://docs.streamlit.io/develop/api-reference/configuration/config.toml#theme)
 ---
@@ -90,7 +90,8 @@ MAPBOX_ACCESS_KEY = "pk.YOURKEYHERE"
 ```
 
 ---
-**Do you have your own Mapbox access token?**
+:question: Do you have your own Mapbox access token?
+---
 ---
 
 ### 3. Create the Streamlit app basic structure
@@ -166,6 +167,7 @@ You should be able to see your app on http://localhost:8501/ or similar.
 
 You will see the title of the app
 
+---
 ## The Map container
 
 
@@ -313,14 +315,48 @@ If you want play with the options of color, height and opacity.
 
 **Refresh your app and you should see your map with 3D buildings.**
 
+---
+:warning: Seems like something is not working. What could it be?
+---
+
+---
+
+
+### Sending API key to the map
+
+In our dashboard we need to read the map file and send the access token to the map container.
+To do so we can use the following code:
+
+```python
+with open("./Map_Lecture.html", 'r', encoding="utf-8") as f:
+            mapbox_html = f.read()
+
+mapbox_html = mapbox_html.replace("__MAPBOX_KEY__", MAPBOX_API_KEY)
+
+```
+Here we are "sending a text message" to the html file and replacing the text script with the mapbox key.
+
+---
 Perhaps you want to change the initial state zoom and the center of the map.
 
-
-
----
-**What are the coordinates for the city center of Enschede?** 
----
----
-**Which zoom level would be good to set for the map?**
+:question: What are the coordinates for the city center of Enschede? 
+:question: Which zoom level would be good to set for the map?
 ---
 
+---
+## Read Data
+
+we are going to read 
+
+- SENTINEL HEAT DATA
+- add polygon boundary
+- crop raster to the extent of the city
+- find some NDVI data
+- Get max and min indicators
+- Create hexagons
+- Perform zonal statistics
+- Draw polygons on the map
+- change values of raster inside polygons
+- update indicators
+
+- figure out other indicators
