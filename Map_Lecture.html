@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8" />
+  <title>Draw polygon</title>
+  <meta name="viewport" content="initial-scale=1,maximum-scale=1,user-scalable=no" />
+  <link href="https://api.mapbox.com/mapbox-gl-js/v3.15.0/mapbox-gl.css" rel="stylesheet" />
+
+  <link rel="stylesheet" href="https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-draw/v1.5.1/mapbox-gl-draw.css" type="text/css">
+  <script src="https://api.mapbox.com/mapbox-gl-js/v3.15.0/mapbox-gl.js"></script>
+  <script src='https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-draw/v1.4.3/mapbox-gl-draw.js'></script>
+  <style>
+    body { margin: 0; padding: 0; }
+    #map { position: absolute; top: 0; bottom: 0; width: 100%; }
+    p { color: black;}
+  </style>
+</head>
+<body>
+  <div id="map"></div>
+  <script>
+    mapboxgl.accessToken = 'pk.eyJ1IjoiY3lnbnVzMjYiLCJhIjoiY2s5Z2MzeWVvMGx3NTNtbzRnbGtsOXl6biJ9.8SLdJuFQzuN-s4OlHbwzLg';
+
+    const map = new mapboxgl.Map({
+      container: 'map',
+      style: 'mapbox://styles/mapbox/streets-v11',
+      center: [6.89, 52.22], // e.g. Enschede
+      zoom: 11
+    });
+
+    const draw = new MapboxDraw({
+        displayControlsDefault: false,
+        // Select which mapbox-gl-draw control buttons to add to the map.
+        controls: {
+            polygon: true,
+            trash: true
+        },
+        // Set mapbox-gl-draw to draw by default.
+        // The user does not have to click the polygon control button first.
+        defaultMode: 'draw_polygon'
+    });
+    map.addControl(draw);
+
+    // When a polygon is created or updated, get its GeoJSON and send to backend
+    function sendPolygonToBackend() {
+      const data = draw.getAll(); // FeatureCollection
+      if (!data.features.length) return;
+
+      // Here we assume there is only one polygon
+      const polygonFeature = data.features[0];
+        console.log('Polygon feature:', polygonFeature);
+      fetch('http://localhost:8000/polygon', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(polygonFeature) // single polygon feature
+      })
+      .then(r => r.json())
+      .then(res => {
+        console.log('Raster processed:', res);
+      })
+      .catch(err => console.error(err));
+    }
+
+    map.on('draw.create', sendPolygonToBackend);
+    map.on('draw.update', sendPolygonToBackend);
+  </script>
+</body>
+</html>
