@@ -344,13 +344,60 @@ Perhaps you want to change the initial state zoom and the center of the map.
 ---
 
 ---
-## Read Data
+### Download Data
 
-we are going to read 
+Using the [provided code](https://github.com/cygnus26/Dashboard/Tutorial/Scripts/LST_Landsat) we can Download the Landsat 9 Land surface temperature of our city.
 
-- SENTINEL HEAT DATA
-- add polygon boundary
-- crop raster to the extent of the city
+To import it we can use the following code:
+
+```python
+from Scripts.LST_Landsat import *
+```
+
+Then we can create a function to load the data:
+
+```python
+def load_data(city, path):
+    get_city_boundary(city)
+    lst = generate_LST()
+    save_LST(city, lst, path) 
+
+```
+:exclamation: Check your folder, now we have a boundary and a LST raster for the city of Enschede.
+
+### Reading the data
+
+We are going to set some variables for our data so we store them in caps.
+
+```python
+
+CITY_BOUNDARY = gpd.read_file("./data/Enschede.geojson")
+
+LST_ENSCHEDE = rasterio.open("./data/LST_Enschede.tif") 
+
+PET_ENSCHEDE_HEX = gpd.read_file("./data/Heat_Enschede.json")
+
+```
+
+Our LST file is a raster file. To make it easier to work we are going to conver this into a hexagonal grid.
+
+To do this we are going to use a package called [Tobler](https://pysal.org/tobler/installation.html) which is an extension of pysal.
+
+```python
+from tobler.util import h3fy
+
+def create_hexagons(city:gpd, resolution:int, local_crs):
+    print("Creating hexagons...")
+    hexes = h3fy(city, resolution=10, clip=True)
+        
+    hex_wgs84 = hexes.to_crs(epsg=4326)
+    
+    return hex_wgs84
+
+```
+
+
+- Zonal stats for hexagons
 - find some NDVI data
 - Get max and min indicators
 - Create hexagons

@@ -16,7 +16,8 @@
 </head>
 <body>
   <script id="mapbox-key" type="text/plain">__MAPBOX_KEY__</script>
-  <script id="heat-enschede" type="application/json">__HEAT_ENSCHEDE__</script>
+  <script id="heat-enschede" type="application/json">__PET_ENSCHEDE__</script>
+  <script id="hexagons-enschede" type="application/json">__HEXAGONS__</script>
   <div id="map"></div>
   <script>
     mapboxgl.accessToken = document.getElementById('mapbox-key').textContent;
@@ -81,6 +82,11 @@
         data: JSON.parse(document.getElementById("heat-enschede").textContent)
       });
 
+      map.addSource("hexagons", {
+        type: "geojson",
+        data: JSON.parse(document.getElementById("hexagons-enschede").textContent)
+      });
+
       map.addLayer({
       id: "heat-hex",
       type: "fill-extrusion",
@@ -101,9 +107,25 @@
           52, 300
         ],
         "fill-extrusion-opacity": 0.9
-      }
-          
+      },
+      'layout': {
+                // Make the layer visible by default.
+                'visibility': 'none'
+            },
+         
         });
+
+      map.addLayer({
+        id: "hexagons",
+        type: "fill-extrusion",
+        source: "hexagons",
+        paint: {
+          "fill-extrusion-color": "#32b318",
+          "fill-extrusion-height": 100,
+          "fill-extrusion-opacity": 0.9,
+          "fill-extrusion-edge-radius": 1
+        }
+      })
     });
     
 
@@ -145,6 +167,15 @@
 
     map.on('draw.create', sendPolygonToBackend);
     map.on('draw.update', sendPolygonToBackend);
+
+
+    function showLayer(layerId) {
+    map.setLayoutProperty(layerId, 'visibility', 'visible');
+}
+
+function hideLayer(layerId){
+    map.setLayoutProperty(layerId, 'visibility', 'none');
+}
   </script>
 </body>
 </html>
