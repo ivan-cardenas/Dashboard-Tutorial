@@ -32,13 +32,13 @@ def generate_LST(city):
     print("Images found:", img.size().getInfo())
 
     # Use the maximum pixel value across time (same as img.max() in JS)
-    median = img.median().clip(city)
+    max = img.max().clip(city)
 
     # ---------------------------
     # 3) Convert ST_B10 → LST (°C)
     # ---------------------------
 
-    bt = median.select("ST_B10")
+    bt = max.select("ST_B10")
 
     # Convert using USGS LST formula (scaled brightness temperature)
     lst = (

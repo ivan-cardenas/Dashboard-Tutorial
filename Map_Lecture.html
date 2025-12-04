@@ -120,8 +120,20 @@
         type: "fill-extrusion",
         source: "hexagons",
         paint: {
-          "fill-extrusion-color": "#32b318",
-          "fill-extrusion-height": 100,
+          "fill-extrusion-color": [
+          "interpolate",
+          ["linear"],
+          ["get", "mean"],
+          10, "#dfba41",
+          55, "#ff4e39"
+        ],
+          "fill-extrusion-height": [
+          "interpolate",
+          ["linear"],
+          ["get", "mean"],
+          10, 10,
+          55, 800
+        ],
           "fill-extrusion-opacity": 0.9,
           "fill-extrusion-edge-radius": 1
         }

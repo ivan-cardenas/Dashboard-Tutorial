@@ -386,7 +386,7 @@ To do this we are going to use a package called [Tobler](https://pysal.org/toble
 ```python
 from tobler.util import h3fy
 
-def create_hexagons(city:gpd, resolution:int, local_crs):
+def create_hexagons(city:gpd, resolution:int):
     print("Creating hexagons...")
     hexes = h3fy(city, resolution=10, clip=True)
         
@@ -396,13 +396,138 @@ def create_hexagons(city:gpd, resolution:int, local_crs):
 
 ```
 
+Now we can store the hexagons in a variable and we send it to our map.
 
-- Zonal stats for hexagons
-- find some NDVI data
-- Get max and min indicators
-- Create hexagons
-- Perform zonal statistics
-- Draw polygons on the map
+To do so, we need to add a new layer in our map.
+
+1. Add the source of the layer:
+
+```html
+<script id="hexagons-enschede" type="application/json">__HEXAGONS__</script>
+<script>
+map.on('load', () => {
+    ...
+
+    map.add_source(
+        'hexagons',
+        {
+            'type': 'geojson',
+            'data': JSON.parse(document.getElementById('hexagons-enschede').textContent)
+        }
+    )
+    ...
+});
+</script>
+```
+2. Add the layer to the map
+
+```js
+
+map.add_layer({
+    id: 'hexagons',
+    type: 'fill-extrusion',
+    source: 'hexagons',
+    paint: {
+          "fill-extrusion-color": "#32b318",
+          "fill-extrusion-height": 100,
+          "fill-extrusion-opacity": 0.9,
+          "fill-extrusion-edge-radius": 1
+        }
+});
+```
+
+3. create the hexagons and send them to the map.
+
+
+```python
+# On Dashboard.py
+Hexagons_ENSCHEDE = create_hexagons(CITY_BOUNDARY, 10)
+...
+# Before rendering the component
+mapbox_html = mapbox_html.replace("__HEXAGONS__", Hexagons_ENSCHEDE.to_json())
+
+components.html(mapbox_html, height=800)
+```
+
+---
+:arrows_counterclockwise: Refresh your app and you should see your map with 3D buildings and the hexagons.
+
+---
+
+### Zonal Statistics
+
+We need to create some values inside our hexagons, so we are going to calculate the mean LST inside the hexagons.
+
+Lets create a function to do so:
+
+```python
+from rasterio.mask import mask
+
+def calculate_stats(raster_path:str, zones:gpd, stat:str):
+    print("Calculating stats...")
+    raster = rasterio.open(raster_path)
+    def derive_stats(geom, data, **mask_kw):
+        masked, mask_transform = mask(dataset=data, shapes=(geom,),
+                                    crop=True, all_touched=True, filled=True)
+        return masked
+    
+    zones[stat] = zones.geometry.apply(derive_stats, data=raster).apply(np.mean)
+    
+    return zones
+```
+And now we can change our hexagons: to the ones with information inside them.
+
+```python
+hexagons_empty = create_hexagons(CITY_BOUNDARY, 10)
+HEXAGONS = calculate_stats("./data/LST_Enschede.tif", hexagons_empty, "mean")
+```
+---
+:arrows_counterclockwise: Lets refresh our app and see the changes
+
+---
+
+### Indicators
+
+Now that we have our map set, lets show some key data on our Twin.
+
+#### Max and Min
+Lets quickly calculate the max and min LST values and store them in a variable.
+
+
+```python
+max_lst = round(LST_ENSCHEDE.read(1).max(),2)
+min_lst = round(LST_ENSCHEDE.read(1).min(),2)
+mean_lst = round(LST_ENSCHEDE.read(1).mean(),2)
+
+```
+### Indicators
+
+Now we will display them under our map. To do so we first configure how many columns we want in our container. and then we can add an indicator to each column. There are two ways to do this:
+
+```python
+
+col1, col2, col3 = st.columns(3)
+
+with col1 as col:
+    st.metric("Max LST", f"{max_lst}°C", delta=f"{1.5}°C")
+    
+
+
+col2.metric("Min LST", f"{min_lst}°C", delta=f"{0}°C")
+col3.metric("Mean LST", f"{mean_lst}°C", delta=f"{-0.24} °C")
+```
+Notice that we set a delta value, which is the change in the metric compared to the previous value. This is helpful fo future updates
+
+:arrows_counterclockwise: Lets refresh our app and see the changes
+
+:exclamation: Check the documentation for more information about the st.metric() function. 
+
+:question: How can we add a graph here?
+
+---
+
+
+- slider
 - change values of raster inside polygons
 - update indicators
 

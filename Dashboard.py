@@ -7,6 +7,7 @@ import plotly.express as px
 import plotly.graph_objects as go
 import json
 import rasterio
+from rasterio.mask import mask
 import math
 import shapely
 from tobler.util import h3fy
@@ -39,9 +40,9 @@ def handle_load_button(city:str, path:str):
     st.session_state.hex_json = HEXAGONS.to_json()
 
 
-def create_hexagons(city:gpd, resolution:int, local_crs):
+def create_hexagons(city:gpd, resolution:int,):
     print("Creating hexagons...")
-    hexes = h3fy(city, resolution=10, clip=True)
+    hexes = h3fy(city, resolution, clip=True)
         
     hex_wgs84 = hexes.to_crs(epsg=4326)
     
@@ -53,7 +54,19 @@ def build_map_html(pet_json: str, hex_json: str) -> str:
     html = html.replace("__PET_ENSCHEDE__", pet_json)
     html = html.replace("__HEXAGONS__", hex_json)
     return html
+
+def calculate_stats(raster_path:str, zones:gpd, stat:str):
+    print("Calculating stats...")
+    raster = rasterio.open(raster_path)
+    def derive_stats(geom, data, **mask_kw):
+        masked, mask_transform = mask(dataset=data, shapes=(geom,),
+                                    crop=True, all_touched=True, filled=True)
+        return masked
     
+    zones[stat] = zones.geometry.apply(derive_stats, data=raster).apply(np.mean)
+    print("Stats calculated:", zones.size)
+    return zones
+
 # =======================
 # CONSTANTS & FIXED DATA
 # =======================
@@ -71,7 +84,7 @@ LST_ENSCHEDE = rasterio.open("./data/LST_Enschede.tif")
 
 PET_ENSCHEDE_HEX = gpd.read_file("./data/Heat_Enschede.json")
 
-HEXAGONS = create_hexagons(CITY_BOUNDARY, 10, 28992)
+
 
 
 with open("./Map_Lecture.html", 'r', encoding="utf-8") as f:
@@ -81,7 +94,22 @@ with open("./Map_Lecture.html", 'r', encoding="utf-8") as f:
 # SIDEBAR
 # =======================
 with st.sidebar:
-    st.button("Load data", on_click=(handle_load_button), args=("Enschede", "./data/LST_Enschede.tif"))
+    st.markdown("## Parameters")
+    hex_res = st.slider("Select resolution", 1, 12, 8, key="resolution")
+
+
+
+# =======================
+# VARIABLES
+# =======================
+
+max_lst = round(LST_ENSCHEDE.read(1).max(),2)
+min_lst = round(LST_ENSCHEDE.read(1).min(),2)
+mean_lst = round(LST_ENSCHEDE.read(1).mean(),2)
+
+hexes = create_hexagons(CITY_BOUNDARY, hex_res)
+HEXAGONS = calculate_stats("./data/LST_Enschede.tif", hexes, "mean").to_json()
+
     
 
 
@@ -94,21 +122,24 @@ st.title("🏙️ Digital Twin Dashboard Demo")
 # =======================
 # MAP WINDOW
 # =======================
-if "hex_json" not in st.session_state:
-    st.session_state.hex_json = HEXAGONS.to_json()
-    
-st.session_state.layer_visible = True
 
-    
-hex_json = st.session_state.hex_json
-
-mapbox_html = build_map_html(PET_ENSCHEDE_HEX.to_json(), st.session_state.hex_json)
+mapbox_html = build_map_html(PET_ENSCHEDE_HEX.to_json(), HEXAGONS)
 
 components.html(
     mapbox_html,
-    height=600,
+    height=800,
 )
     
+col1, col2, col3 = st.columns(3)
+
+with col1 as col:
+    st.metric("Max LST", f"{max_lst}°C", delta=f"{1.5}°C")
+    
+
+
+col2.metric("Min LST", f"{min_lst}°C", delta=f"{0}°C")
+col3.metric("Mean LST", f"{mean_lst}°C", delta=f"{-0.24} °C")
+
 
 # =======================
 # FOOTER
