@@ -528,6 +528,7 @@ Notice that we set a delta value, which is the change in the metric compared to 
 
 
 - slider
+- **Why are the values not changing?**
 - change values of raster inside polygons
 - update indicators
 
