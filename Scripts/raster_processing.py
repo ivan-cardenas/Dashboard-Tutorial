@@ -13,7 +13,7 @@ def apply_polygon_mask(feature: dict) -> str:
     Returns path to modified raster.
     """
     # --- 1. Read raster ---
-    raster_path = Path("data/input_raster.tif")   # <- your raster here
+    raster_path = Path("data/LST_Enschede.tif")   # <- your raster here
     out_path = Path("data/output_raster_masked.tif")
 
     with rasterio.open(raster_path) as src:

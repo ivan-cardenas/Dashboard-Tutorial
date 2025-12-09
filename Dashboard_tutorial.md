@@ -344,7 +344,7 @@ Perhaps you want to change the initial state zoom and the center of the map.
 ---
 
 ---
-### Download Data
+## Download Data
 
 Using the [provided code](https://github.com/cygnus26/Dashboard/Tutorial/Scripts/LST_Landsat) we can Download the Landsat 9 Land surface temperature of our city.
 
@@ -486,7 +486,7 @@ HEXAGONS = calculate_stats("./data/LST_Enschede.tif", hexagons_empty, "mean")
 
 ---
 
-### Indicators
+## Indicators
 
 Now that we have our map set, lets show some key data on our Twin.
 
@@ -500,7 +500,7 @@ min_lst = round(LST_ENSCHEDE.read(1).min(),2)
 mean_lst = round(LST_ENSCHEDE.read(1).mean(),2)
 
 ```
-### Indicators
+### Add Indicators to map
 
 Now we will display them under our map. To do so we first configure how many columns we want in our container. and then we can add an indicator to each column. There are two ways to do this:
 
@@ -526,9 +526,150 @@ Notice that we set a delta value, which is the change in the metric compared to 
 
 ---
 
+### Add a slider
 
-- slider
-- **Why are the values not changing?**
+Now we want to change the size of the hexagons based on the slider value. So we need to first create an slider component and add it to the sidebar
+
+```python
+
+with st.sidebar:
+    st.markdown("## Parameters")
+    hex_res = st.slider("Hexagons size", 1, 12, 8, key="resoliution")
+```
+
+and now we need to change the way we call the hexagons to the map
+
+```python
+# ===== Variables
+hexes = create_hexagons(CITY_BOUNDARY, hex_res)
+HEXAGONS = calculate_stats("./data/LST_Enschede.tif", hexes, "mean").to_json()
+
+# ===== Map Window
+mapbox_html = build_map_html(PET_ENSCHEDE_HEX.to_json(), HEXAGONS)
+```
+
+---
+:arrows_counterclockwise: Lets refresh our app and see the changes
+
+Play around with the size of the hexagons
+
+---
+
+---
+:question: **Why are the values of the indicators not changing?**
+---
+
+##  Complex Processes - From Frontend to Backend
+
+### Drawing a polygon on the map
+
+Draing the polygon is easy to do, just include the following code on the head of your HTML file:
+
+```html
+  <link rel="stylesheet" href="https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-draw/v1.5.1/mapbox-gl-draw.css" type="text/css">
+  <script src='https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-draw/v1.4.3/mapbox-gl-draw.js'></script>
+```
+
+And in the body add the following code:
+
+```js
+map.on('load', () => {
+    ...
+    const draw = new MapboxDraw({
+        displayControlsDefault: false,
+        // Select which mapbox-gl-draw control buttons to add to the map.
+        controls: {
+            polygon: true,
+            trash: true
+        },
+        // Set mapbox-gl-draw to draw by default.
+        // The user does not have to click the polygon control button first.
+        defaultMode: 'draw_polygon'
+    });
+    map.addControl(draw);
+...   
+})
+```
+---
+:arrows_counterclockwise: Lets refresh our app and see the changes
+---
+
+---
+
+The hard part is to figure out how to get the polygon data from the map, and then send it to the backend.
+
+### Fast API
+
+We can use FastAPI to create a simple API to get the data from the map. So create a new file called **fastapi.py** and add the following code:
+
+```python
+from fastapi import FastAPI
+from pydantic import BaseModel
+from typing import Any, Dict
+import uvicorn
+
+app = FastAPI()
+
+class GeoJSONFeature(BaseModel):
+    type: str
+    geometry: Dict[str, Any]
+    properties: Dict[str, Any] | None = None
+
+@app.post("/polygon")
+async def receive_polygon(feature: GeoJSONFeature):
+    print("Polygon received:", feature)
+    return {"status": "ok", "received": feature}
+
+if __name__ == "__main__":
+     uvicorn.run("fast_api:app", host="0.0.0.0", port=8000, reload=True)
+
+```
+
+Now open a new terminal and run the following command:
+
+```bash
+uv run fast_api.py
+```
+
+Now go to the Dashboard and try to draw a polygon on the map. Check the console for the output.
+
+---
+:question: Are you getting errors? What could it be?
+---
+
+---
+
+### Fixing connections
+
+To allow for the two servers to "talk" to each other we need to add the following code to the FastAPI server:
+
+```python
+from fastapi.middleware.cors import CORSMiddleware
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],  # or specify allowed origins for security
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+``` 
+
+Note that this works for any other server. So it is not safe to use this for production. Only use it for local development.
+
+---
+:arrows_counterclockwise: Lets restart the FastAPI server and refresh our app
+---
+
+---
+Check now the logs of the HTML to see if the polygon is received
+
+---
+
+
+
+
+
 - change values of raster inside polygons
 - update indicators
 
