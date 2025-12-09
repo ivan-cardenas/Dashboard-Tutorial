@@ -1,16 +1,15 @@
 # Dashboard Tutorial for Digital Twin 
+
 ## Initialization
 
+### 1. Create a folder where we are going to store the app
 
-
-### 1.	Create a folder where we are going to store the app
-    
-```
+```bash
     My_folder/Dashboard   
 ```
-    
 
-### 2.	Initialize Github repository ** Optional – Connect with github
+### 2. Initialize Github repository ** Optional – Connect with github
+
 ```os
     cd My_folder/Dashboard
     git init
@@ -24,24 +23,27 @@ Or you can use VS Code + Github extension. Then go to the github tab and click o
 
 You will be asked to log in with your github account and write a name for your remote repository.
 
-### 3.	Create intial files in the folder. 
+### 3. Create intial files in the folder.
 
 Create a Dashboard.py file for the Streamlit app,
 Create a Map.html which will be your map container.
 
 ### 4. Create a virtual environment and add packages to it
-a.	I have been using UV for package management (a bit easier and cleaner than only pip)
+
+a. I have been using UV for package management (a bit easier and cleaner than only pip)
 
 b. On the terminal
 
 ```py
     pip install uv      
 ```
-	
-For mac 
-```
+
+For mac:
+
+```bash
  brew install uv
 ```
+
 c.	Now to create a virtual environment
 
 ```py
