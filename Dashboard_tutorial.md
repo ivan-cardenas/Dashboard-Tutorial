@@ -1,4 +1,4 @@
-# Dashboard Tutorial for Digital Twin 
+# Dashboard Tutorial for Digital Twin
 
 ## Initialization
 
@@ -23,7 +23,7 @@ Or you can use VS Code + Github extension. Then go to the github tab and click o
 
 You will be asked to log in with your github account and write a name for your remote repository.
 
-### 3. Create intial files in the folder.
+### 3. Create intial files in the folder
 
 Create a Dashboard.py file for the Streamlit app,
 Create a Map.html which will be your map container.
@@ -668,11 +668,47 @@ Check now the logs of the HTML to see if the polygon is received
 
 ---
 
+#### Polygon processing
+
+Now we need to create a function to perform calculations in this area we drew on the map.
+
+So we are going to create a new python file called **raster_processing.py** and add the code I sent you on canvas.
+
+---
+:question: What does this function do? 
+---
+:question: How can we include this in our dashboard?
+
+---
+
+In your FastAPI code, add the following code:
+
+```python
+from raster_processing import edit_raster_polygon
+
+@app.post("/polygon")
+async def receive_polygon(feature: GeoJSONFeature):
+    output_raster, stats = edit_raster_polygon(feature.dict(),
+                                        raster_path="data/LST_Enschede.tif",
+                                        out_path="data/LST_Enschede_modified.tif",
+                                        mode="add",
+                                        add_value=3                                   
+                                        )
+    print("Polygon received:", feature, "Output raster:", stats)
+    return {"status": "ok", "output": output_raster}
+```
 
 
+## Your turn!
+
+Now that you have a working dashboard, you can start to add more indicators and data to it.
+
+Your task is to do the following:
+
+- Include a new dataset (raster or vector)
+- Add **TWO** new indicators
+- Add **ONE** widget (button, slider, dropdown)
+- Add **ONE** chart
 
 
-- change values of raster inside polygons
-- update indicators
-
-- figure out other indicators
+Good luck!

@@ -1,0 +1,2159 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>Digital Twin Dashboard Tutorial</title>
+
+    <!-- Based on Dashboard_tutorial.md :contentReference[oaicite:0]{index=0} -->
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <!-- Reveal.js core -->
+    <link rel="stylesheet" href="https://unpkg.com/reveal.js/dist/reveal.css" />
+    <link
+      rel="stylesheet"
+      href="https://unpkg.com/reveal.js/dist/theme/black.css"
+      id="theme"
+    />
+
+    <!-- Syntax highlighting -->
+    <link
+      rel="stylesheet"
+      href="https://unpkg.com/reveal.js/plugin/highlight/monokai.css"
+    />
+
+    <!-- Playful techy custom styling -->
+    <style>
+      :root {
+        --accent: #3b80cf;
+        --accent-soft: rgba(59, 128, 207, 0.2);
+        --bg-main: radial-gradient(
+          circle at top left,
+          #243b53 0%,
+          #0b1020 40%,
+          #05060b 100%
+        );
+        --card-bg: rgba(10, 12, 24, 0.92);
+        --border-soft: rgba(255, 255, 255, 0.1);
+        --muted: #a9b3c1;
+        --good: #32b318;
+        --warn: #ffcd00;
+        --error: #ff5f6c;
+        --code-bg: #111827;
+      }
+
+      body {
+        background: #05060b;
+        font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI",
+          sans-serif;
+      }
+
+      .reveal {
+        background-image: var(--bg-main);
+        background-size: cover;
+      }
+
+      .reveal .slides {
+        text-align: left;
+      }
+
+      .reveal h1,
+      .reveal h2,
+      .reveal h3 {
+        font-weight: 700;
+        letter-spacing: 0.03em;
+      }
+
+      .reveal h1 {
+        font-size: 2.6rem;
+      }
+
+      .reveal h2 {
+        font-size: 2rem;
+      }
+
+      .reveal h3 {
+        font-size: 1.5rem;
+      }
+
+      .subtitle {
+        color: var(--muted);
+        font-size: 1rem;
+        margin-top: 0.4rem;
+      }
+
+      .pill {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.4rem;
+        padding: 0.25rem 0.7rem;
+        border-radius: 999px;
+        border: 1px solid var(--border-soft);
+        background: rgba(0, 0, 0, 0.35);
+        font-size: 0.7rem;
+        text-transform: uppercase;
+        letter-spacing: 0.11em;
+        color: var(--muted);
+      }
+
+      .pill span.icon {
+        font-size: 0.95rem;
+      }
+
+      .card {
+        background: var(--card-bg);
+        border-radius: 1.1rem;
+        padding: 1rem 1.2rem;
+        border: 1px solid var(--border-soft);
+        box-shadow: 0 18px 55px rgba(0, 0, 0, 0.6);
+      }
+
+      .card-grid {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 1rem;
+        margin-top: 1.2rem;
+      }
+
+      .card-grid-2 {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 1rem;
+        margin-top: 1.2rem;
+      }
+
+      .card-title {
+        font-size: 0.9rem;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.12em;
+        color: var(--muted);
+        margin-bottom: 0.4rem;
+      }
+
+      .card-main {
+        font-size: 1rem;
+      }
+
+      .tag-row {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.3rem;
+        margin-top: 0.35rem;
+      }
+
+      .tag {
+        font-size: 0.7rem;
+        padding: 0.15rem 0.55rem;
+        border-radius: 999px;
+        border: 1px solid var(--border-soft);
+        background: rgba(255, 255, 255, 0.02);
+        color: var(--muted);
+      }
+
+      .diagram {
+        border-radius: 1.2rem;
+        border: 1px dashed rgba(255, 255, 255, 0.3);
+        padding: 0.9rem 1.1rem;
+        font-size: 0.95rem;
+        line-height: 1.5;
+        background: radial-gradient(
+          circle at top left,
+          rgba(59, 128, 207, 0.2),
+          transparent 55%
+        );
+        margin-top: 1rem;
+      }
+
+      .diagram strong {
+        color: var(--accent);
+      }
+
+      .timeline {
+        border-left: 2px solid var(--accent-soft);
+        margin-top: 1rem;
+        padding-left: 0.9rem;
+      }
+
+      .timeline-item {
+        margin-bottom: 0.7rem;
+        position: relative;
+      }
+
+      .timeline-dot {
+        position: absolute;
+        left: -1.18rem;
+        top: 0.25rem;
+        width: 0.6rem;
+        height: 0.6rem;
+        border-radius: 999px;
+        background: var(--accent);
+        box-shadow: 0 0 0 6px rgba(59, 128, 207, 0.35);
+      }
+
+      .timeline-label {
+        font-size: 0.8rem;
+        text-transform: uppercase;
+        letter-spacing: 0.09em;
+        color: var(--muted);
+        margin-bottom: 0.1rem;
+      }
+
+      .timeline-body {
+        font-size: 0.95rem;
+      }
+
+      .reveal pre code {
+        max-height: 460px;
+        background: var(--code-bg);
+        border-radius: 0.8rem;
+        padding: 0.9rem 1rem;
+        font-size: 0.8rem;
+        line-height: 1.5;
+        border: 1px solid rgba(255, 255, 255, 0.05);
+      }
+
+      .code-label {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.4rem;
+        font-size: 0.7rem;
+        text-transform: uppercase;
+        letter-spacing: 0.12em;
+        color: var(--muted);
+        margin-bottom: 0.4rem;
+      }
+
+      .code-label span.icon {
+        font-size: 0.9rem;
+      }
+
+      .metrics-row {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 1rem;
+        margin-top: 1rem;
+      }
+
+      .metric-card {
+        flex: 1 1 0;
+        min-width: 170px;
+        border-radius: 1rem;
+        background: linear-gradient(
+          135deg,
+          rgba(50, 179, 24, 0.2),
+          rgba(9, 12, 24, 0.9)
+        );
+        border: 1px solid rgba(50, 179, 24, 0.3);
+        padding: 0.8rem 0.9rem;
+      }
+
+      .metric-label {
+        font-size: 0.8rem;
+        text-transform: uppercase;
+        letter-spacing: 0.12em;
+        color: var(--muted);
+      }
+
+      .metric-value {
+        font-size: 1.4rem;
+        font-weight: 600;
+      }
+
+      .metric-delta {
+        font-size: 0.8rem;
+        color: var(--good);
+      }
+
+      .metric-delta.negative {
+        color: var(--error);
+      }
+
+      .question-badge,
+      .warning-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.6rem;
+        padding: 0.35rem 0.7rem;
+        border-radius: 999px;
+        font-size: 1.3rem;
+        text-transform: uppercase;
+        letter-spacing: 0.12em;
+        margin-top: 3rem;
+      }
+
+      .question-badge {
+        color: #fff;
+        background: rgba(59, 128, 207, 0.22);
+        border: 1px solid rgba(59, 128, 207, 0.5);
+      }
+
+      .warning-badge {
+        color: #111;
+        background: rgba(255, 205, 0, 0.9);
+        border: 1px solid rgba(255, 205, 0, 1);
+      }
+
+      .slider-row {
+        display: flex;
+        gap: 1rem;
+        margin-top: 1rem;
+        align-items: center;
+        flex-wrap: wrap;
+      }
+
+      .fake-slider {
+        flex: 1 1 260px;
+        height: 32px;
+        border-radius: 999px;
+        background: linear-gradient(90deg, var(--accent), #32b318);
+        position: relative;
+        box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.15);
+      }
+
+      .fake-slider-knob {
+        position: absolute;
+        top: 3px;
+        left: 54%;
+        width: 26px;
+        height: 26px;
+        border-radius: 999px;
+        background: #fff;
+        box-shadow: 0 6px 18px rgba(0, 0, 0, 0.5);
+      }
+
+      .fake-slider-label {
+        font-size: 0.8rem;
+        color: var(--muted);
+      }
+
+      .badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.3rem;
+        padding: 0.3rem 0.6rem;
+        border-radius: 999px;
+        background: rgba(0, 0, 0, 0.5);
+        border: 1px solid var(--border-soft);
+        font-size: 0.65rem;
+        text-transform: uppercase;
+        letter-spacing: 0.11em;
+        color: var(--muted);
+      }
+
+      .layout-grid {
+        display: grid;
+        grid-template-columns: minmax(0, 1.4fr) minmax(0, 1fr);
+        gap: 1.2rem;
+        margin-top: 1rem;
+      }
+
+      .kv-row {
+        font-size: 0.9rem;
+        display: flex;
+        justify-content: space-between;
+        gap: 0.8rem;
+        margin-bottom: 0.35rem;
+        color: var(--muted);
+      }
+
+      .kv-row span.key {
+        opacity: 0.8;
+      }
+
+      .kv-row span.val {
+        color: #fff;
+        font-weight: 500;
+      }
+
+      .flow-row {
+        margin-top: 0.8rem;
+        font-size: 0.9rem;
+        color: var(--muted);
+      }
+
+      .flow-row span.arrow {
+        color: var(--accent);
+        padding: 0 0.3rem;
+      }
+
+      .footer-hint {
+        position: absolute;
+        bottom: 1.3rem;
+        right: 1.6rem;
+        font-size: 0.65rem;
+        text-transform: uppercase;
+        letter-spacing: 0.12em;
+        color: rgba(255, 255, 255, 0.45);
+      }
+
+      .footer-hint span {
+        opacity: 0.6;
+        margin-left: 0.15rem;
+      }
+
+      .small {
+        font-size: 0.8rem;
+        color: var(--muted);
+      }
+      .slide-footer {
+        position: fixed;
+        bottom: 0.5rem;
+        left: 0;
+        right: 0;
+        text-align: center;
+        font-size: 1.2rem;
+        font-family: 'Lato', system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI",
+          sans-serif;
+        opacity: 0.75;
+        z-index: 30; /* above slides, below menus if any */
+        pointer-events: none; /* so clicks pass through */
+      }
+    </style>
+  </head>
+  <body>
+    <div class="reveal">
+      <div class="slides">
+        <!-- Title -->
+        <section data-auto-animate>
+          <div class="pill">
+            <span class="icon">🛰️</span><span>Digital Twin Workshop</span>
+          </div>
+          <h1>Building a Digital Twin Dashboard</h1>
+          <p class="subtitle">
+            Streamlit + MapboxGL + Landsat LST &mdash; from zero folder to 3D
+            hexagons 🚀
+          </p>
+
+          <div class="card-grid-2" style="margin-top: 2rem">
+            <div class="card">
+              <div class="card-title">Today you&apos;ll learn to</div>
+              <div class="card-main">
+                <ul>
+                  <li>Create a clean, versioned dashboard project</li>
+                  <li>Style a Streamlit app like a real product</li>
+                  <li>Embed a 3D Mapbox map inside Streamlit</li>
+                  <li>Hexify a Landsat LST raster with <code>tobler</code></li>
+                  <li>Wire frontend&nbsp;&harr;&nbsp;backend with FastAPI</li>
+                </ul>
+              </div>
+            </div>
+            <div class="card">
+              <div class="card-title">Tech stack</div>
+              <div class="card-main">
+                <div class="tag-row">
+                  <span class="tag">🐍 Python</span>
+                  <span class="tag">⚙️ Streamlit</span>
+                  <span class="tag">🗺️ Mapbox GL JS</span>
+                  <span class="tag">🌡️ Landsat 9 LST</span>
+                  <span class="tag">🧱 h3 / tobler</span>
+                  <span class="tag">🚀 FastAPI</span>
+                </div>
+                <div class="diagram">
+                  <strong>Big picture:</strong> <br />
+                  UI (Streamlit) &rarr; Map (MapboxGL) &rarr; Geo stack
+                  (GeoPandas, rasterio, tobler) &rarr; <br />
+                  <strong>Back to UI as indicators and 3D hexagons.</strong>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="footer-hint">
+            Press <span>&darr; / &rarr;</span> to explore the stack
+          </div>
+
+          <aside class="notes">
+            This talk is based on the Dashboard_tutorial.md file. We’ll walk
+            through it as a live build. Everything that appears as step-by-step
+            instructions in the .md is moved into presenter notes like this, so
+            slides stay visual and playful and you don’t have to squint at walls
+            of text. Overview from the tutorial: - We create a folder for the
+            dashboard. - Optionally initialize a GitHub repository. - Create
+            initial files: Dashboard.py and Map.html. - Create a virtual
+            environment with uv and install packages. - Configure Streamlit
+            theme in .streamlit/config.toml. - Add secrets.toml with
+            MAPBOX_ACCESS_KEY. - Set up Streamlit layout and section comments. -
+            Create a Map.html container with Mapbox GL JS and a point layer. -
+            Replace the point layer with 3D buildings using Mapbox’s composite
+            building layer. - Read Map_Lecture.html in the Streamlit app and
+            inject the Mapbox key. - Download LST data using Scripts/LST_Landsat
+            and save LST rasters and city boundary. - Read data with GeoPandas
+            and rasterio, then convert to hexagons using tobler.h3fy. - Send
+            hexagons to Mapbox as a fill-extrusion layer. - Compute mean LST per
+            hexagon with zonal statistics (rasterio.mask and numpy). - Create
+            indicators for max / min / mean LST with st.metric. - Add a slider
+            in the sidebar to change hexagon resolution. - Introduce Mapbox Draw
+            polygon drawing on the map. - Create a FastAPI service to receive
+            polygons as GeoJSON. - Add CORS middleware to allow the HTML/Mapbox
+            frontend to talk to FastAPI locally. We’ll mirror the order of the
+            tutorial, but each section is summarized visually on slides while
+            all the original wording and code lives here in the notes.
+          </aside>
+        </section>
+
+        <!-- Section: Project boot -->
+        <section>
+          <section data-auto-animate>
+            <div class="pill">
+              <span class="icon">🗂️</span><span>Initialization</span>
+            </div>
+            <h2>Booting the project folder</h2>
+
+            <div class="timeline">
+              <div class="timeline-item">
+                <div class="timeline-dot"></div>
+                <div class="timeline-label">Step 1</div>
+                <div class="timeline-body">
+                  Create your project folder:
+                  <strong>My_folder/Dashboard</strong>
+                </div>
+              </div>
+              <div class="timeline-item">
+                <div class="timeline-dot"></div>
+                <div class="timeline-label">Step 2</div>
+                <div class="timeline-body">
+                  Optionally initialize a Git repository and connect to GitHub.
+                </div>
+              </div>
+              <div class="timeline-item">
+                <div class="timeline-dot"></div>
+                <div class="timeline-label">Step 3</div>
+                <div class="timeline-body">
+                  Add the core files: <code>Dashboard.py</code> and
+                  <code>Map.html</code>.
+                </div>
+              </div>
+            </div>
+
+            <div style="margin-top: 1.4rem">
+              <div class="code-label">
+                <span class="icon">💻</span
+                ><span>Project skeleton (terminal)</span>
+              </div>
+              <pre><code class="language-bash">
+mkdir -p My_folder/Dashboard
+cd My_folder/Dashboard
+touch Dashboard.py Map.html
+          </code></pre>
+            </div>
+
+            <aside class="notes">
+              Initialization section of the tutorial: 1. Create a folder where
+              we are going to store the app ```bash My_folder/Dashboard ``` 2.
+              Initialize GitHub repository (optional – connect with GitHub)
+              ```bash cd My_folder/Dashboard git init git add . git commit -m
+              "Initialize repo" git remote add origin
+              https://github.com/username/Dashboard git push -u origin master
+              ``` Or use VS Code + GitHub extension, go to the GitHub tab and
+              click "Initialize repository". You’ll be asked to log in and
+              choose a remote repo name. 3. Create initial files in the folder:
+              - Dashboard.py (Streamlit app) - Map.html (map container) Make
+              sure to highlight in the demo that Git is optional but highly
+              recommended so people can sync with GitHub and roll back
+              experiments.
+            </aside>
+          </section>
+
+          <section data-auto-animate>
+            <h2>Version control &amp; remote</h2>
+
+            <div class="layout-grid">
+              <div>
+                <div class="card">
+                  <div class="card-title">Why bother with Git? 🤔</div>
+                  <div class="card-main">
+                    <ul>
+                      <li>Experiment safely with map styles &amp; code</li>
+                      <li>
+                        Roll back that &quot;small change&quot; that broke
+                        everything
+                      </li>
+                      <li>Push your tutorial to GitHub for students</li>
+                    </ul>
+                  </div>
+                </div>
+              </div>
+              <div>
+                <div class="code-label">
+                  <span class="icon">🌐</span><span>Minimal Git flow</span>
+                </div>
+                <pre><code class="language-bash">
+git init
+git add .
+git commit -m "Initialize dashboard tutorial"
+# (After creating repo on GitHub)
+git remote add origin https://github.com/username/Dashboard
+git push -u origin master
+            </code></pre>
+              </div>
+            </div>
+
+            <aside class="notes">
+              This slide elaborates Step 2: - Demonstrate `git init`, `git add
+              .`, `git commit -m "Initialize repo"`. - Show how to add the
+              remote: ```bash git remote add origin
+              https://github.com/username/Dashboard git push -u origin master
+              ``` - Alternatively: VS Code + GitHub extension, use the
+              "Initialize repository" button. Emphasize: - Students can
+              fork/clone the repo later. - They can follow along without
+              worrying about losing work.
+            </aside>
+          </section>
+        </section>
+
+        <!-- Section: Virtual env -->
+        <section>
+          <section data-auto-animate>
+            <div class="pill">
+              <span class="icon">🧪</span><span>Environment</span>
+            </div>
+            <h2>Spinning up a clean Python env</h2>
+
+            <div class="card-grid">
+              <div class="card">
+                <div class="card-title">Package manager</div>
+                <div class="card-main">
+                  We&apos;ll use <strong>uv</strong> for a clean venv + fast
+                  installs:
+                  <ul>
+                    <li>Isolated from system Python</li>
+                    <li>Reproducible between machines</li>
+                    <li>Perfect for teaching setups</li>
+                  </ul>
+                </div>
+              </div>
+              <div class="card">
+                <div class="card-title">Key libraries</div>
+                <div class="card-main">
+                  <div class="tag-row">
+                    <span class="tag">streamlit</span>
+                    <span class="tag">pandas</span>
+                    <span class="tag">plotly</span>
+                    <span class="tag">numpy</span>
+                    <span class="tag">geopandas</span>
+                    <span class="tag">rasterio</span>
+                    <span class="tag">shapely</span>
+                    <span class="tag">json</span>
+                  </div>
+                </div>
+              </div>
+              <div class="card">
+                <div class="card-title">Terminal spells</div>
+                <div class="card-main">
+                  <div class="code-label">
+                    <span class="icon">📦</span><span>Install uv</span>
+                  </div>
+                  <pre><code class="language-bash">
+pip install uv       # Windows / generic
+brew install uv      # macOS
+              </code></pre>
+                </div>
+              </div>
+            </div>
+
+            <aside class="notes">
+              From the tutorial: a. Use uv for package management: ```bash pip
+              install uv ``` For macOS: ```bash brew install uv ``` b. Create a
+              virtual environment: ```bash uv venv ``` c. Add packages to the
+              virtual environment: ```bash uv pip install streamlit pandas
+              plotly numpy geopandas json rasterio shapely ``` Explain why we
+              like uv: - The command `uv venv` handles virtual env creation. -
+              `uv pip` acts like pip inside that environment. - Keeps the
+              tutorial environment self-contained and clean.
+            </aside>
+          </section>
+
+          <section data-auto-animate>
+            <h2>Creating &amp; filling the venv</h2>
+
+            <div class="layout-grid">
+              <div>
+                <div class="code-label">
+                  <span class="icon">🧬</span
+                  ><span>Create &amp; activate venv</span>
+                </div>
+                <pre><code class="language-bash">
+# Inside My_folder/Dashboard
+uv venv
+
+# Activate (typical patterns)
+# Windows
+.\.venv\Scripts\activate
+
+# macOS / Linux
+source .venv/bin/activate
+            </code></pre>
+              </div>
+              <div>
+                <div class="code-label">
+                  <span class="icon">📦</span
+                  ><span>Install all dashboard deps</span>
+                </div>
+                <pre><code class="language-bash">
+uv pip install \
+  streamlit pandas plotly numpy \
+  geopandas json rasterio shapely
+            </code></pre>
+
+                <p class="small" style="margin-top: 0.8rem">
+                  Pro tip: add a <code>requirements.txt</code> later so others
+                  can clone the repo and run
+                  <code>uv pip install -r requirements.txt</code>.
+                </p>
+              </div>
+            </div>
+
+            <aside class="notes">
+              Walk students through: - `uv venv` to create the environment in
+              the project. - Typical activation commands depending on OS. - Then
+              `uv pip install streamlit pandas plotly numpy geopandas json
+              rasterio shapely`. Mention: - They should see a `.venv` (or
+              similar) folder created. - In IDEs like VS Code, select that
+              interpreter as project interpreter.
+            </aside>
+          </section>
+        </section>
+
+        <!-- Section: Streamlit app setup -->
+        <section>
+          <section data-auto-animate>
+            <div class="pill">
+              <span class="icon">🎨</span><span>Streamlit setup</span>
+            </div>
+            <h2>Theming the dashboard</h2>
+
+            <div class="layout-grid">
+              <div>
+                <div class="card">
+                  <div class="card-title">Theme config file</div>
+                  <div class="card-main">
+                    In your app folder:
+                    <ul>
+                      <li>Create a folder <code>.streamlit</code></li>
+                      <li>Add <code>config.toml</code> inside</li>
+                      <li>Define a dark, dashboard-y theme</li>
+                    </ul>
+                  </div>
+                </div>
+
+                
+              </div>
+              <div>
+                <div class="code-label">
+                  <span class="icon">🧾</span
+                  ><span>.streamlit/config.toml</span>
+                </div>
+                <pre><code class="language-toml">
+[theme]
+primaryColor = "#3b80cfff"
+backgroundColor = "#2a2a2a"
+secondaryBackgroundColor = "#121212"
+textColor = "#ffffff"
+linkColor = "#3b80cfff"
+borderColor = "#7c7c7c"
+showWidgetBorder = true
+font = "sans serif"
+            </code></pre>
+              </div>
+
+            
+            </div>
+<div class="question-badge">
+                  <span>🎨</span
+                  ><span
+                    >Make it your own: colors and fonts are meant to be
+                    tweaked!</span
+                  >
+                </div>
+            <aside class="notes">
+              From the tutorial: Create a Streamlit config file and styling. -
+              In the folder where the app is located, create
+              `.streamlit/config.toml`. - Paste the theme configuration: ```toml
+              [theme] primaryColor="#3b80cfff" backgroundColor="#2a2a2a"
+              secondaryBackgroundColor="#121212" textColor="#ffffff"
+              linkColor="#3b80cfff" borderColor = "#7c7c7c" showWidgetBorder =
+              true font="sans serif" ``` - Mention that they can see more
+              configuration options in the Streamlit docs under `config.toml`
+              theme section. The slide calls out: “Make it your own! Change the
+              colors and the font.”
+            </aside>
+          </section>
+
+          <section data-auto-animate>
+            <h2>Secrets: hiding your Mapbox key</h2>
+
+            <div class="card-grid-2">
+              <div class="card">
+                <div class="card-title">Why secrets.toml? 🔐</div>
+                <div class="card-main">
+                  <ul>
+                    <li>Don&apos;t hard-code tokens in Python or HTML</li>
+                    <li>Easy to read via <code>st.secrets</code></li>
+                    <li>Plays nicely with Streamlit Cloud</li>
+                  </ul>
+                  
+                </div>
+              </div>
+              <div class="card">
+                <div class="code-label">
+                  <span class="icon">🔑</span
+                  ><span>.streamlit/secrets.toml</span>
+                </div>
+                <pre><code class="language-toml">
+MAPBOX_ACCESS_KEY = "pk.YOURKEYHERE"
+            </code></pre>
+                <p class="small" style="margin-top: 0.8rem">
+                  Later in Python:
+                  <code>MAPBOX_API_KEY = st.secrets["MAPBOX_ACCESS_KEY"]</code>
+                </p>
+              </div>
+            </div>
+            <div class="question-badge">
+                    <span>🗺️</span
+                    ><span>Do you already have a Mapbox access token?</span>
+                  </div>
+
+            <aside class="notes">
+              From the tutorial: Create a secrets file for the app. - All secret
+              information should go into `.streamlit/secrets.toml`. - For now we
+              only add the Mapbox access token: ```toml MAPBOX_ACCESS_KEY =
+              "pk.YOURKEYHERE" ``` Ask students: - Do you have your own Mapbox
+              access token? - If not, guide them briefly on creating a free
+              Mapbox account and generating a token.
+            </aside>
+          </section>
+
+          <section data-auto-animate>
+            <h2>Basic Streamlit app skeleton</h2>
+
+            <div class="layout-grid">
+              <div>
+                <div class="card">
+                  <div class="card-title">Sectioning your code</div>
+                  <div class="card-main">
+                    Use comments as landmarks in <code>Dashboard.py</code>:
+                    <pre><code class="language-python">
+# ==== Import packages ====
+# ==== Page layout ====
+# ==== Read data ===
+# ==== Functions ====
+# ==== Sidebar ====
+# ==== Main panel ====
+# ==== Map ====
+# ==== Footer ====
+                </code></pre>
+                  </div>
+                </div>
+              </div>
+              <div>
+                <div class="code-label">
+                  <span class="icon">⚙️</span><span>Imports &amp; layout</span>
+                </div>
+                <pre><code class="language-python">
+import streamlit as st
+import pandas as pd
+import numpy as np
+import streamlit.components.v1 as components
+import plotly.express as px
+import plotly.graph_objects as go
+import json
+import geopandas as gpd
+
+st.set_page_config(
+    page_title="Dashboard",
+    page_icon="📊",
+    layout="wide",
+    initial_sidebar_state="expanded"
+)
+
+st.title("DT Dashboard Demo")
+            </code></pre>
+              </div>
+            </div>
+
+            <aside class="notes">
+              From the tutorial: - Add section separators as comments: ```python
+              # ==== Import packages ==== # ==== Page layout ==== # ==== Read
+              data === # ==== Functions ==== # ==== Sidebar ==== # ==== Main
+              panel ==== # ==== Map ==== # ==== Footer ==== ``` - Then import
+              packages: ```python import streamlit as st import pandas as pd
+              import numpy as np import streamlit.components.v1 as components
+              import plotly.express as px import plotly.graph_objects as go
+              import json import geopandas as gpd ``` - Configure page layout:
+              ```python st.set_page_config( page_title="Dashboard",
+              page_icon="📊", layout="wide", initial_sidebar_state="expanded" )
+              ``` - Finally add a title: ```python st.title("DT Dashboard Demo")
+              ``` First run: - Run in terminal: ```bash streamlit run
+              Dashboard.py ``` - They should see the app at
+              `http://localhost:8501` with the title showing.
+            </aside>
+          </section>
+        </section>
+
+        <!-- Section: Map container -->
+        <section>
+          <section data-auto-animate>
+            <div class="pill">
+              <span class="icon">🗺️</span><span>Map container</span>
+            </div>
+            <h2>Why a custom Mapbox container?</h2>
+
+            <div class="layout-grid">
+              <div>
+                <div class="card">
+                  <div class="card-title">
+                    Beyond Streamlit&apos;s default maps
+                  </div>
+                  <div class="card-main">
+                    Streamlit&apos;s map functions are great for quick plots,
+                    but:
+                    <ul>
+                      <li>
+                        We want full MapboxGL power (3D, layers, draw tools)
+                      </li>
+                      <li>
+                        We want to control camera, styles &amp; layers precisely
+                      </li>
+                      <li>
+                        We can embed HTML as a component with
+                        <code>components.html</code>
+                      </li>
+                    </ul>
+                  </div>
+                </div>
+              </div>
+              <div>
+                <div class="diagram">
+                  <strong>Architecture sketch:</strong><br />
+                  <code>Dashboard.py</code> (Streamlit)<br />
+                  <span class="arrow">⟶</span> loads <code>Map.html</code><br />
+                  <span class="arrow">⟶</span> injects Mapbox token + data<br />
+                  <span class="arrow">⟶</span> MapboxGL JS renders 3D city +
+                  hexes
+                </div>
+              </div>
+            </div>
+
+            <aside class="notes">
+              From the tutorial: “The Map container” - Streamlit has basic map
+              options, but we want more power. - So we create our own HTML file
+              `Map.html` to host MapboxGL. - We then embed that HTML into the
+              Streamlit app. Key idea: Mapbox lives in `Map.html` as a pure JS
+              map, and Streamlit passes data + tokens into it.
+            </aside>
+          </section>
+
+          <section data-auto-animate>
+            <h2>Map.html &mdash; HTML skeleton</h2>
+
+            <div class="layout-grid">
+              <div>
+                <div class="code-label">
+                  <span class="icon">📄</span><span>Base HTML</span>
+                </div>
+                <pre><code class="language-html">
+&lt;!DOCTYPE html&gt;
+&lt;html lang="en"&gt;
+  &lt;head&gt;
+    &lt;meta charset="UTF-8" /&gt;
+    &lt;meta name="viewport"
+          content="width=device-width, initial-scale=1.0" /&gt;
+    &lt;title&gt;Map view&lt;/title&gt;
+
+    &lt;link href="https://api.mapbox.com/mapbox-gl-js/v3.15.0/mapbox-gl.css"
+          rel="stylesheet" /&gt;
+    &lt;script src="https://api.mapbox.com/mapbox-gl-js/v3.15.0/mapbox-gl.js"&gt;
+    &lt;/script&gt;
+
+    &lt;style&gt;
+      body, html {
+        margin: 0;
+        padding: 0;
+        height: 100%;
+      }
+      #map {
+        position: absolute;
+        inset: 0;
+      }
+    &lt;/style&gt;
+  &lt;/head&gt;
+  &lt;body&gt;
+
+  &lt;/body&gt;
+&lt;/html&gt;
+            </code></pre>
+              </div>
+              <div>
+                <div class="card">
+                  <div class="card-title">Key ingredients</div>
+                  <div class="card-main">
+                    <ul>
+                      <li>
+                        Include Mapbox GL CSS + JS in <code>&lt;head&gt;</code>
+                      </li>
+                      <li>
+                        Add a full-screen <code>&lt;div id="map"&gt;</code> in
+                        <code>&lt;body&gt;</code>
+                      </li>
+                      <li>
+                        We&apos;ll inject the access token and layers next
+                      </li>
+                    </ul>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <aside class="notes">
+              From the tutorial: - Create `Map.html` with a basic HTML5
+              skeleton. - Add MapboxGL CSS and JS: ```html
+              <link
+                href="https://api.mapbox.com/mapbox-gl-js/v3.15.0/mapbox-gl.css"
+                rel="stylesheet"
+              />
+              <script src="https://api.mapbox.com/mapbox-gl-js/v3.15.0/mapbox-gl.js"></script>
+              ``` Emphasize: - `#map` div will host the Mapbox instance. -
+              Styling ensures it fills the whole iframe area when embedded in
+              Streamlit.
+            </aside>
+          </section>
+
+          <section data-auto-animate>
+            <h2>Injecting the Mapbox token + basic map</h2>
+
+            <div class="layout-grid">
+              <div>
+                <div class="code-label">
+                  <span class="icon">🔑</span
+                  ><span>Token placeholder in HTML</span>
+                </div>
+                <pre><code class="language-html">
+&lt;body&gt;
+  &lt;script id="mapbox-key" type="text/plain"&gt;
+    __MAPBOX_KEY__
+  &lt;/script&gt;
+
+  &lt;div id="map"&gt;&lt;/div&gt;
+
+  &lt;script&gt;
+    mapboxgl.accessToken =
+      document.getElementById("mapbox-key").textContent.trim();
+
+    const map = new mapboxgl.Map({
+      container: "map",
+      style: "mapbox://styles/mapbox/streets-v12",
+      center: [6.52, 52.40],
+      pitch: 45,
+      bearing: -20,
+      zoom: 12
+    });
+  &lt;/script&gt;
+&lt;/body&gt;
+            </code></pre>
+              </div>
+              <div>
+                <div class="card">
+                  <div class="card-title">First visual check ✅</div>
+                  <div class="card-main">
+                    <ul>
+                      <li>Run Streamlit and embed Map.html</li>
+                      <li>
+                        If the token is injected correctly, you&apos;ll see a
+                        3D-ish map over Enschede
+                      </li>
+                      <li>
+                        We&apos;ll add layers next (points &rarr; 3D buildings
+                        &rarr; hexagons)
+                      </li>
+                    </ul>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <aside class="notes">
+              From the tutorial: - Add the token placeholder: ```html
+              <script id="mapbox-key" type="text/plain">
+                __MAPBOX_KEY__
+              </script>
+              ``` - Create the container div and the basic map: ```html
+              <div id="map"></div>
+              <script>
+                mapboxgl.accessToken =
+                  document.getElementById("mapbox-key").textContent;
+
+                const map = new mapboxgl.Map({
+                  container: "map",
+                  style: "mapbox://styles/mapbox/streets-v12",
+                  center: [6.52, 52.4],
+                  pitch: 45,
+                  beearing: -20,
+                  zoom: 12,
+                });
+
+                map.on("load", () => {
+                  map.addLayer({
+                    id: "points",
+                    type: "circle",
+                    source: {
+                      type: "geojson",
+                      data: {
+                        type: "FeatureCollection",
+                        features: [
+                          {
+                            type: "Feature",
+                            geometry: {
+                              type: "Point",
+                              coordinates: [6.52, 52.4],
+                            },
+                          },
+                        ],
+                      },
+                    },
+                    paint: {
+                      "circle-radius": 10,
+                    },
+                  });
+                });
+              </script>
+              ``` - Mention: you can start with the point layer just as a sanity
+              check before moving to 3D buildings.
+            </aside>
+          </section>
+        </section>
+
+        <!-- Section: 3D buildings -->
+        <section>
+          <section data-auto-animate>
+            <div class="pill">
+              <span class="icon">🏙️</span><span>3D city</span>
+            </div>
+            <h2>Turning on 3D buildings</h2>
+
+            <div class="layout-grid">
+              <div>
+                <div class="diagram">
+                  Use the <strong>composite</strong> source from Mapbox
+                  Streets:<br /><br />
+                  1. Find label layer ID<br />
+                  2. Insert 3D buildings <em>just under</em> labels<br />
+                  3. Use <code>zoom</code>-based interpolation for smooth growth
+                </div>
+              </div>
+              <div>
+                <div class="code-label">
+                  <span class="icon">🏗️</span
+                  ><span>3D building layer (JS)</span>
+                </div>
+                <pre><code class="language-javascript">
+map.on("style.load", () =&gt; {
+  const layers = map.getStyle().layers;
+  const labelLayerId = layers.find(
+    (l) =&gt; l.type === "symbol" &amp;&amp; l.layout["text-field"]
+  ).id;
+
+  map.addLayer(
+    {
+      id: "add-3d-buildings",
+      source: "composite",
+      "source-layer": "building",
+      filter: ["==", "extrude", "true"],
+      type: "fill-extrusion",
+      minzoom: 15,
+      paint: {
+        "fill-extrusion-color": "#aaa",
+        "fill-extrusion-height": [
+          "interpolate",
+          ["linear"],
+          ["zoom"],
+          15, 0,
+          15.05, ["get", "height"]
+        ],
+        "fill-extrusion-base": [
+          "interpolate",
+          ["linear"],
+          ["zoom"],
+          15, 0,
+          15.05, ["get", "min_height"]
+        ],
+        "fill-extrusion-opacity": 0.6
+      }
+    },
+    labelLayerId
+  );
+});
+            </code></pre>
+              </div>
+            </div>
+
+            <div class="warning-badge">
+              <span>⚠️</span
+              ><span
+                >If something doesn&apos;t show, check the console for style /
+                source errors.</span
+              >
+            </div>
+
+            <aside class="notes">
+              From the tutorial: Adding 3D buildings. - Replace point layer with
+              building layer using Mapbox Streets composite source. - Use the
+              code snippet provided to add `add-3d-buildings` layer. -
+              Explanation: - `filter: ['==', 'extrude', 'true']` uses OSM
+              building attributes. - `fill-extrusion-height` and
+              `fill-extrusion-base` use an `interpolate` expression on zoom to
+              make buildings grow smoothly as you zoom in. - Insert the layer
+              just under the label layer by using `labelLayerId`. - Tell
+              participants: refresh the app, they should see 3D buildings. - If
+              something fails, prompt them: “Seems like something is not
+              working. What could it be?”
+            </aside>
+          </section>
+        </section>
+
+        <!-- Section: Passing data into map -->
+        <section>
+          <section data-auto-animate>
+            <div class="pill">
+              <span class="icon">📨</span><span>Streamlit → Mapbox</span>
+            </div>
+            <h2>Sending the token &amp; data to Map.html</h2>
+
+            <div class="layout-grid">
+              <div>
+                <div class="card">
+                  <div class="card-title">Text replacement trick</div>
+                  <div class="card-main">
+                    In <code>Dashboard.py</code>, read <code>Map.html</code> as
+                    a string and replace placeholders:
+                    <ul>
+                      <li><code>__MAPBOX_KEY__</code> → real access token</li>
+                      <li>
+                        Later: <code>__HEXAGONS__</code> → GeoJSON hex grid
+                      </li>
+                    </ul>
+                  </div>
+                </div>
+                <div class="flow-row">
+                  <span class="arrow">⟶</span> Think of it as sending a tiny
+                  text message from Python into your HTML.
+                </div>
+              </div>
+              <div>
+                <div class="code-label">
+                  <span class="icon">🧵</span><span>Injecting the API key</span>
+                </div>
+                <pre><code class="language-python">
+MAPBOX_API_KEY = st.secrets["MAPBOX_ACCESS_KEY"]
+
+with open("./Map_Lecture.html", "r", encoding="utf-8") as f:
+    mapbox_html = f.read()
+
+mapbox_html = mapbox_html.replace("__MAPBOX_KEY__", MAPBOX_API_KEY)
+
+components.html(mapbox_html, height=800)
+            </code></pre>
+              </div>
+            </div>
+
+            <aside class="notes">
+              From the tutorial: Sending API key to the map. - Read the Map HTML
+              file: ```python with open("./Map_Lecture.html", 'r',
+              encoding="utf-8") as f: mapbox_html = f.read() ``` - Replace the
+              placeholder with the key: ```python mapbox_html =
+              mapbox_html.replace("__MAPBOX_KEY__", MAPBOX_API_KEY) ``` -
+              Explain that this is “sending a text message” from the dashboard
+              to the HTML file. - Later we’ll reuse the same technique to inject
+              hexagon GeoJSON.
+            </aside>
+          </section>
+        </section>
+
+        <!-- Section: Data & hexagons -->
+        <section>
+          <section data-auto-animate>
+            <div class="pill">
+              <span class="icon">🌡️</span><span>Data pipeline</span>
+            </div>
+            <h2>Downloading Landsat LST &amp; reading data</h2>
+
+            <div class="layout-grid">
+              <div>
+                <div class="card">
+                  <div class="card-title">Using helper script</div>
+                  <div class="card-main">
+                    We&apos;ll rely on a provided script:
+                    <div class="tag-row" style="margin-top: 0.4rem">
+                      <span class="tag">Scripts/LST_Landsat.py</span>
+                    </div>
+                    <p style="margin-top: 0.6rem">It handles:</p>
+                    <ul>
+                      <li>Getting the city boundary</li>
+                      <li>Generating an LST raster</li>
+                      <li>Saving data to <code>./data/</code></li>
+                    </ul>
+                  </div>
+                </div>
+              </div>
+              <div>
+                <div class="code-label">
+                  <span class="icon">📥</span><span>Load &amp; run</span>
+                </div>
+                <pre><code class="language-python">
+from Scripts.LST_Landsat import *
+
+def load_data(city: str, path: str):
+    get_city_boundary(city)
+    lst = generate_LST()
+    save_LST(city, lst, path)
+
+# After running above:
+# - boundary and LST raster exist in ./data/
+CITY_BOUNDARY = gpd.read_file("./data/Enschede.geojson")
+LST_ENSCHEDE = rasterio.open("./data/LST_Enschede.tif")
+PET_ENSCHEDE_HEX = gpd.read_file("./data/Heat_Enschede.json")
+            </code></pre>
+              </div>
+            </div>
+
+            <aside class="notes">
+              From the tutorial: Download Data section. - Using the provided
+              code at the linked GitHub path `Scripts/LST_Landsat`, we download
+              Landsat 9 LST. - Import it: ```python from Scripts.LST_Landsat
+              import * ``` - Create a convenience function: ```python def
+              load_data(city, path): get_city_boundary(city) lst =
+              generate_LST() save_LST(city, lst, path) ``` - After running, we
+              check the folder: - We have a boundary (e.g., `Enschede.geojson`).
+              - We have an LST raster (`LST_Enschede.tif`). - Reading data:
+              ```python CITY_BOUNDARY = gpd.read_file("./data/Enschede.geojson")
+              LST_ENSCHEDE = rasterio.open("./data/LST_Enschede.tif")
+              PET_ENSCHEDE_HEX = gpd.read_file("./data/Heat_Enschede.json") ```
+              Emphasize: LST is a raster; we’ll convert it into a hex grid to
+              simplify front-end styling.
+            </aside>
+          </section>
+
+          <section data-auto-animate>
+            <h2>From raster to hexagon grid</h2>
+
+            <div class="layout-grid">
+              <div>
+                <div class="card">
+                  <div class="card-title">Why hexagons? 🐝</div>
+                  <div class="card-main">
+                    <ul>
+                      <li>Visually pleasing &amp; uniform neighborhoods</li>
+                      <li>Good for aggregating raster values</li>
+                      <li>H3 indexes are mapbox-friendly</li>
+                    </ul>
+                    <p style="margin-top: 0.5rem">
+                      We&apos;ll use <code>tobler.util.h3fy</code> (built on
+                      PySAL).
+                    </p>
+                  </div>
+                </div>
+              </div>
+              <div>
+                <div class="code-label">
+                  <span class="icon">🧊</span><span>Create hexagons</span>
+                </div>
+                <pre><code class="language-python">
+from tobler.util import h3fy
+
+def create_hexagons(city: gpd.GeoDataFrame,
+                    resolution: int):
+    print("Creating hexagons...")
+    hexes = h3fy(city, resolution=10, clip=True)
+
+    hex_wgs84 = hexes.to_crs(epsg=4326)
+    return hex_wgs84
+
+Hexagons_ENSCHEDE = create_hexagons(CITY_BOUNDARY, 10)
+            </code></pre>
+              </div>
+            </div>
+
+            <aside class="notes">
+              From the tutorial: converting to hexagonal grid. - Use tobler
+              (PySAL extension): ```python from tobler.util import h3fy def
+              create_hexagons(city:gpd, resolution:int): print("Creating
+              hexagons...") hexes = h3fy(city, resolution=10, clip=True)
+              hex_wgs84 = hexes.to_crs(epsg=4326) return hex_wgs84 ``` - Store
+              the hexagons and later send them to Mapbox. Mention: - We’ll soon
+              inject them into the HTML via `__HEXAGONS__`.
+            </aside>
+          </section>
+
+          <section data-auto-animate>
+            <h2>Sending hexagons to MapboxGL</h2>
+
+            <div class="layout-grid">
+              <div>
+                <div class="code-label">
+                  <span class="icon">📡</span><span>In Map.html</span>
+                </div>
+                <pre><code class="language-html">
+&lt;script id="hexagons-enschede"
+        type="application/json"&gt;
+  __HEXAGONS__
+&lt;/script&gt;
+
+&lt;script&gt;
+map.on("load", () =&gt; {
+  // ...
+  map.addSource("hexagons", {
+    type: "geojson",
+    data: JSON.parse(
+      document.getElementById("hexagons-enschede").textContent
+    )
+  });
+
+  map.addLayer({
+    id: "hexagons",
+    type: "fill-extrusion",
+    source: "hexagons",
+    paint: {
+      "fill-extrusion-color": "#32b318",
+      "fill-extrusion-height": 100,
+      "fill-extrusion-opacity": 0.9,
+      "fill-extrusion-edge-radius": 1
+    }
+  });
+});
+&lt;/script&gt;
+            </code></pre>
+              </div>
+              <div>
+                <div class="code-label">
+                  <span class="icon">🔄</span><span>In Dashboard.py</span>
+                </div>
+                <pre><code class="language-python">
+hexagons_empty = create_hexagons(CITY_BOUNDARY, 10)
+HEXAGONS = calculate_stats(
+    "./data/LST_Enschede.tif",
+    hexagons_empty,
+    "mean"
+)
+
+with open("./Map_Lecture.html", "r", encoding="utf-8") as f:
+    mapbox_html = f.read()
+
+mapbox_html = mapbox_html.replace(
+    "__HEXAGONS__", HEXAGONS.to_json()
+)
+
+components.html(mapbox_html, height=800)
+            </code></pre>
+
+                <div class="question-badge">
+                  <span>🔁</span
+                  ><span
+                    >Refresh the app &mdash; do you see 3D hex columns
+                    now?</span
+                  >
+                </div>
+              </div>
+            </div>
+
+            <aside class="notes">
+              From the tutorial: injecting hexagons. 1. In Map HTML: ```html
+              <script id="hexagons-enschede" type="application/json">
+                __HEXAGONS__
+              </script>
+              <script>
+                map.on("load", () => {
+                  map.add_source("hexagons", {
+                    type: "geojson",
+                    data: JSON.parse(
+                      document.getElementById("hexagons-enschede").textContent
+                    ),
+                  });
+                });
+              </script>
+              ``` 2. Add layer: ```javascript map.add_layer({ id: 'hexagons',
+              type: 'fill-extrusion', source: 'hexagons', paint: {
+              "fill-extrusion-color": "#32b318", "fill-extrusion-height": 100,
+              "fill-extrusion-opacity": 0.9, "fill-extrusion-edge-radius": 1 }
+              }); ``` 3. In Python, create hexagons and send: ```python
+              Hexagons_ENSCHEDE = create_hexagons(CITY_BOUNDARY, 10) ...
+              mapbox_html = mapbox_html.replace("__HEXAGONS__",
+              Hexagons_ENSCHEDE.to_json()) components.html(mapbox_html,
+              height=800) ``` The tutorial prompts: “Refresh your app and you
+              should see your map with 3D buildings and the hexagons.”
+            </aside>
+          </section>
+        </section>
+
+        <!-- Section: Zonal statistics & indicators -->
+        <section>
+          <section data-auto-animate>
+            <div class="pill">
+              <span class="icon">📊</span><span>Indicators</span>
+            </div>
+            <h2>Adding LST stats per hexagon</h2>
+
+            <div class="layout-grid">
+              <div>
+                <div class="card">
+                  <div class="card-title">Zonal stats</div>
+                  <div class="card-main">
+                    Use <code>rasterio.mask</code> to clip the raster to each
+                    hexagon, then compute statistics (e.g. mean):
+                    <pre><code class="language-python">
+from rasterio.mask import mask
+
+def calculate_stats(raster_path: str,
+                    zones: gpd.GeoDataFrame,
+                    stat: str):
+    print("Calculating stats...")
+    raster = rasterio.open(raster_path)
+
+    def derive_stats(geom, data, **mask_kw):
+        masked, mask_transform = mask(
+            dataset=data,
+            shapes=(geom,),
+            crop=True,
+            all_touched=True,
+            filled=True
+        )
+        return masked
+
+    zones[stat] = zones.geometry.apply(
+        derive_stats,
+        data=raster
+    ).apply(np.mean)
+
+    return zones
+                </code></pre>
+                  </div>
+                </div>
+              </div>
+              <div>
+                <div class="card">
+                  <div class="card-title">Max / Min / Mean LST</div>
+                  <div class="card-main">
+                    <div class="metrics-row">
+                      <div class="metric-card">
+                        <div class="metric-label">Max LST</div>
+                        <div class="metric-value">?? °C</div>
+                        <div class="metric-delta">+1.5 °C vs baseline</div>
+                      </div>
+                      <div class="metric-card">
+                        <div class="metric-label">Min LST</div>
+                        <div class="metric-value">?? °C</div>
+                        <div class="metric-delta">±0.0 °C</div>
+                      </div>
+                      <div class="metric-card">
+                        <div class="metric-label">Mean LST</div>
+                        <div class="metric-value">?? °C</div>
+                        <div class="metric-delta negative">-0.24 °C</div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <aside class="notes">
+              From the tutorial: Zonal Statistics. - Define `calculate_stats`
+              using `rasterio.mask.mask`: ```python from rasterio.mask import
+              mask def calculate_stats(raster_path:str, zones:gpd, stat:str):
+              print("Calculating stats...") raster = rasterio.open(raster_path)
+              def derive_stats(geom, data, **mask_kw): masked, mask_transform =
+              mask(dataset=data, shapes=(geom,), crop=True, all_touched=True,
+              filled=True) return masked zones[stat] =
+              zones.geometry.apply(derive_stats, data=raster).apply(np.mean)
+              return zones ``` - Then: ```python hexagons_empty =
+              create_hexagons(CITY_BOUNDARY, 10) HEXAGONS =
+              calculate_stats("./data/LST_Enschede.tif", hexagons_empty, "mean")
+              ``` - For global stats (max / min / mean): ```python max_lst =
+              round(LST_ENSCHEDE.read(1).max(),2) min_lst =
+              round(LST_ENSCHEDE.read(1).min(),2) mean_lst =
+              round(LST_ENSCHEDE.read(1).mean(),2) ```
+            </aside>
+          </section>
+
+          <section data-auto-animate>
+            <h2>Showing indicators in Streamlit</h2>
+
+            <div class="layout-grid">
+              <div>
+                <div class="code-label">
+                  <span class="icon">📈</span><span>st.metric layout</span>
+                </div>
+                <pre><code class="language-python">
+max_lst = round(LST_ENSCHEDE.read(1).max(), 2)
+min_lst = round(LST_ENSCHEDE.read(1).min(), 2)
+mean_lst = round(LST_ENSCHEDE.read(1).mean(), 2)
+
+col1, col2, col3 = st.columns(3)
+
+with col1 as col:
+    st.metric("Max LST",
+              f"{max_lst}°C",
+              delta=f"{1.5}°C")
+
+col2.metric("Min LST",
+            f"{min_lst}°C",
+            delta=f"{0}°C")
+
+col3.metric("Mean LST",
+            f"{mean_lst}°C",
+            delta=f"{-0.24}°C")
+            </code></pre>
+              </div>
+              <div>
+                <div class="card">
+                  <div class="card-title">Design tips</div>
+                  <div class="card-main">
+                    <ul>
+                      <li>
+                        Align metrics visually with the map below or above
+                      </li>
+                      <li>Use deltas to hint at trends / future comparisons</li>
+                      <li>
+                        Later, add a small sparkline chart next to one of them
+                      </li>
+                    </ul>
+                    <div class="question-badge">
+                      <span>📊</span
+                      ><span
+                        >How could we visualize changes over time here?</span
+                      >
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <aside class="notes">
+              From the tutorial: Indicators / Add Indicators to map. - Calculate
+              max / min / mean: ```python max_lst =
+              round(LST_ENSCHEDE.read(1).max(),2) min_lst =
+              round(LST_ENSCHEDE.read(1).min(),2) mean_lst =
+              round(LST_ENSCHEDE.read(1).mean(),2) ``` - Create columns and
+              metrics: ```python col1, col2, col3 = st.columns(3) with col1 as
+              col: st.metric("Max LST", f"{max_lst}°C", delta=f"{1.5}°C")
+              col2.metric("Min LST", f"{min_lst}°C", delta=f"{0}°C")
+              col3.metric("Mean LST", f"{mean_lst}°C", delta=f"{-0.24} °C") ```
+              - Note: `delta` helps show changes over previous values; we can
+              update them when we add time dimension later. The tutorial asks:
+              “How can we add a graph here?” — keep that as a discussion prompt.
+            </aside>
+          </section>
+        </section>
+
+        <!-- Section: Slider & interactivity -->
+        <section>
+          <section data-auto-animate>
+            <div class="pill">
+              <span class="icon">🎚️</span><span>Interactivity</span>
+            </div>
+            <h2>Controlling hex size with a slider</h2>
+
+            <div class="slider-row">
+              <div class="fake-slider">
+                <div class="fake-slider-knob"></div>
+              </div>
+              <div>
+                <div class="badge">
+                  <span>🧩</span><span>H3 resolution: 1 &rarr; 12</span>
+                </div>
+                <p class="fake-slider-label">
+                  Smaller value → larger hexes; larger value → finer grid.
+                </p>
+              </div>
+            </div>
+
+            <div style="margin-top: 1.2rem">
+              <div class="code-label">
+                <span class="icon">🧱</span><span>Sidebar slider</span>
+              </div>
+              <pre><code class="language-python">
+with st.sidebar:
+    st.markdown("## Parameters")
+    hex_res = st.slider(
+        "Hexagons size",
+        1, 12, 8,
+        key="resoliution"  # (typo kept from original)
+    )
+          </code></pre>
+            </div>
+
+            <aside class="notes">
+              From the tutorial: Add a slider. - Add in sidebar: ```python with
+              st.sidebar: st.markdown("## Parameters") hex_res =
+              st.slider("Hexagons size", 1, 12, 8, key="resoliution") ``` -
+              Afterwards: ```python hexes = create_hexagons(CITY_BOUNDARY,
+              hex_res) HEXAGONS = calculate_stats("./data/LST_Enschede.tif",
+              hexes, "mean").to_json() # Map Window mapbox_html =
+              build_map_html(PET_ENSCHEDE_HEX.to_json(), HEXAGONS) ``` -
+              Encourage students to play with the slider and observe hex size
+              changes. - The tutorial then asks: “Why are the values of the
+              indicators not changing?” — good moment to discuss that currently
+              the indicators use global LST stats, not hex-aggregated values.
+            </aside>
+          </section>
+        </section>
+
+        <!-- Section: Complex processes - polygon + FastAPI -->
+        <section>
+          <section data-auto-animate>
+            <div class="pill">
+              <span class="icon">🧩</span><span>Frontend → Backend</span>
+            </div>
+            <h2>Drawing polygons on the map</h2>
+
+            <div class="layout-grid">
+              <div>
+                <div class="card">
+                  <div class="card-title">Mapbox Draw plugin</div>
+                  <div class="card-main">
+                    Add CSS + JS in <code>&lt;head&gt;</code>:
+                    <pre><code class="language-html">
+&lt;link rel="stylesheet"
+      href="https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-draw/v1.5.1/mapbox-gl-draw.css"
+      type="text/css"&gt;
+&lt;script src="https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-draw/v1.4.3/mapbox-gl-draw.js"&gt;
+&lt;/script&gt;
+                </code></pre>
+                  </div>
+                </div>
+              </div>
+              <div>
+                <div class="code-label">
+                  <span class="icon">✏️</span
+                  ><span>Enable polygon drawing</span>
+                </div>
+                <pre><code class="language-javascript">
+map.on("load", () =&gt; {
+  // ...
+  const draw = new MapboxDraw({
+    displayControlsDefault: false,
+    controls: {
+      polygon: true,
+      trash: true
+    },
+    defaultMode: "draw_polygon"
+  });
+
+  map.addControl(draw);
+});
+            </code></pre>
+
+                <div class="question-badge">
+                  <span>🧪</span
+                  ><span
+                    >Refresh the app &mdash; can you draw a polygon now?</span
+                  >
+                </div>
+              </div>
+            </div>
+
+            <aside class="notes">
+              From the tutorial: Drawing a polygon on the map. - Add Mapbox Draw
+              CSS + JS to the head: ```html
+              <link
+                rel="stylesheet"
+                href="https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-draw/v1.5.1/mapbox-gl-draw.css"
+                type="text/css"
+              />
+              <script src="https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-draw/v1.4.3/mapbox-gl-draw.js"></script>
+              ``` - Add the draw control on `map.on('load', ...)`: ```javascript
+              const draw = new MapboxDraw({ displayControlsDefault: false,
+              controls: { polygon: true, trash: true }, defaultMode:
+              'draw_polygon' }); map.addControl(draw); ``` - Ask students to
+              refresh app and try drawing a polygon.
+            </aside>
+          </section>
+
+          <section data-auto-animate>
+            <h2>Receiving the polygon with FastAPI</h2>
+
+            <div class="layout-grid">
+              <div>
+                <div class="card">
+                  <div class="card-title">FastAPI endpoint</div>
+                  <div class="card-main">
+                    <pre><code class="language-python">
+from fastapi import FastAPI
+from pydantic import BaseModel
+from typing import Any, Dict
+import uvicorn
+
+app = FastAPI()
+
+class GeoJSONFeature(BaseModel):
+    type: str
+    geometry: Dict[str, Any]
+    properties: Dict[str, Any] | None = None
+
+@app.post("/polygon")
+async def receive_polygon(feature: GeoJSONFeature):
+    print("Polygon received:", feature)
+    return {"status": "ok", "received": feature}
+
+if __name__ == "__main__":
+    uvicorn.run("fast_api:app",
+                host="0.0.0.0",
+                port=8000,
+                reload=True)
+                </code></pre>
+                  </div>
+                </div>
+              </div>
+              <div>
+                <div class="card">
+                  <div class="card-title">Running the server</div>
+                  <div class="card-main">
+                    <pre><code class="language-bash">
+uv run fast_api.py
+                </code></pre>
+                    <p class="small" style="margin-top: 0.6rem">
+                      Keep this terminal open, then draw polygons in the
+                      dashboard and watch the FastAPI logs for &quot;Polygon
+                      received&quot;.
+                    </p>
+                    <div class="question-badge">
+                      <span>🐞</span
+                      ><span
+                        >Getting CORS errors or timeouts? We fix that
+                        next.</span
+                      >
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <aside class="notes">
+              From the tutorial: Fast API. - Create `fastapi.py`: ```python from
+              fastapi import FastAPI from pydantic import BaseModel from typing
+              import Any, Dict import uvicorn app = FastAPI() class
+              GeoJSONFeature(BaseModel): type: str geometry: Dict[str, Any]
+              properties: Dict[str, Any] | None = None @app.post("/polygon")
+              async def receive_polygon(feature: GeoJSONFeature): print("Polygon
+              received:", feature) return {"status": "ok", "received": feature}
+              if __name__ == "__main__": uvicorn.run("fast_api:app",
+              host="0.0.0.0", port=8000, reload=True) ``` - Run with: ```bash uv
+              run fast_api.py ``` - Then go to Dashboard, draw a polygon and
+              check FastAPI console for prints. Tutorial asks: “Are you getting
+              errors? What could it be?” — leads into CORS.
+            </aside>
+          </section>
+
+          <section data-auto-animate>
+            <h2>Fixing CORS so front &amp; back can talk</h2>
+
+            <div class="layout-grid">
+              <div>
+                <div class="card">
+                  <div class="card-title">CORS middleware</div>
+                  <div class="card-main">
+                    <pre><code class="language-python">
+from fastapi.middleware.cors import CORSMiddleware
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],  # dev only
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+                </code></pre>
+                    <p class="small" style="margin-top: 0.6rem">
+                      ⚠️ For production, tighten
+                      <code>allow_origins</code> &amp; methods. This is
+                      intentionally permissive for local experiments.
+                    </p>
+                  </div>
+                </div>
+              </div>
+              <div>
+                <div class="card">
+                  <div class="card-title">Flow recap</div>
+                  <div class="card-main">
+                    <div class="flow-row">
+                      MapboxDraw polygon
+                      <span class="arrow">⟶</span>
+                      JS fetch to <code>POST /polygon</code>
+                      <span class="arrow">⟶</span>
+                      FastAPI receives GeoJSON
+                      <span class="arrow">⟶</span>
+                      Python updates raster / stats
+                      <span class="arrow">⟶</span>
+                      Streamlit shows updated indicators
+                    </div>
+                    <div class="question-badge" style="margin-top: 0.9rem">
+                      <span>🧠</span>
+                      <span
+                        >Next challenges: change raster values inside polygons,
+                        recalc indicators, design new KPIs.</span
+                      >
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <aside class="notes">
+              From the tutorial: Fixing connections. - Add CORS middleware:
+              ```python from fastapi.middleware.cors import CORSMiddleware
+              app.add_middleware( CORSMiddleware, allow_origins=["*"], # or
+              specify allowed origins for security allow_credentials=True,
+              allow_methods=["*"], allow_headers=["*"], ) ``` - Mention that
+              `["*"]` is not safe for production — use specific origins later. -
+              Then restart FastAPI and refresh the app. Final bullets in
+              tutorial: - Check HTML logs to confirm polygon is received. - Next
+              tasks (not fully implemented yet): - Change values of raster
+              inside polygons. - Update indicators. - Figure out other
+              indicators. Use this slide as a “where to go next” conversation.
+            </aside>
+          </section>
+        </section>
+
+        <!-- Polygon processing -->
+        <section>
+          <section data-auto-animate>
+            <div class="pill">
+              <span class="icon">🧩</span><span>Backend processing</span>
+            </div>
+            <h3>Polygon processing</h3>
+            <p></p>
+
+            <div class="layout-grid">
+              <div>
+                <div class="card">
+                  <div class="card-title">Create new file</div>
+                  <div class="card-main">
+                    <pre><code class="language-bash">
+cd ./Scripts
+touch raster_processing.py
+                </code></pre>
+                  </div>
+                </div>
+              </div>
+              <div class="card">
+                <div class="card-title">copy code</div>
+                <div class="card-main">
+                  <pre><code class="language-python">
+import json
+from pathlib import Path
+
+import numpy as np
+import rasterio
+from rasterio.features import geometry_mask
+from shapely.geometry import shape
+import geopandas as gpd
+
+
+def edit_raster_polygon(
+    feature: dict,
+    raster_path: str,
+    .
+    .
+    .
+    </code></pre>
+                </div>
+              </div>
+            </div>
+
+            <aside class="notes">
+              <p>
+                Now we need to create a function to perform calculations in this
+                area we drew on the map.
+              </p>
+              <p>
+                So we are going to create a new python file called
+                <strong>raster_processing.py</strong>
+                and add the code I sent you on canvas.
+              </p>
+            </aside>
+          </section>
+
+          <!-- Question: What does this function do? -->
+          <section data-auto-animate data-transition="fade">
+            <h2>🤔 Question</h2>
+            <h3>What does this function do?</h3>
+
+            <aside class="notes">
+              <p>
+                Let them describe the function in their own words: inputs
+                (polygon + raster), processing steps, and outputs (stats for the
+                selected area).
+              </p>
+            </aside>
+          </section>
+
+          <!-- Question: How can we include this in our dashboard? -->
+          <section data-auto-animate data-transition="fade">
+            <h2>🧩 Question</h2>
+            <h3>How can we include this in our dashboard?</h3>
+
+            <aside class="notes">
+              <p>
+                Guide them to think about importing
+                <code>raster_processing.py</code>, wiring it to a widget (button
+                / selection), and updating the map or charts with the output.
+              </p>
+            </aside>
+          </section>
+
+
+          <section data-auto-animate>
+            <h2>Implementing polygon processing</h2>
+
+            
+              <div>
+                <div class="code-label">
+                  <span class="icon">📥</span
+                  ><span>Import in fast_api.py</span>
+                  
+                </div>
+                <div class="card">
+                  <div class="card-title">In your FastAPI code</div>
+                  <div class="card-main">
+                    <p> Change your code to:</p>
+                <pre><code class="language-python">
+from raster_processing import edit_raster_polygon
+
+@app.post("/polygon")
+async def receive_polygon(feature: GeoJSONFeature):
+    output_raster, stats = edit_raster_polygon(feature.dict(),
+                                        raster_path="data/LST_Enschede.tif",
+                                        out_path="data/LST_Enschede_modified.tif",
+                                        mode="add",
+                                        add_value=3                                   
+                                        )
+    print("Polygon received:", feature, "Output raster:", stats)
+    return {"status": "ok", "output": output_raster}
+                </code></pre>
+              
+            </div>
+            </div>
+            </section>
+        </section>
+        </section>
+        
+
+        <!-- Outro -->
+        <section data-auto-animate>
+          <div class="pill">
+            <span class="icon">✅</span><span>Wrap-up</span>
+          </div>
+          <h2>You now have a mini Digital Twin stack 🧠</h2>
+
+          <div class="card-grid-2">
+            <div class="card">
+              <div class="card-title">What we built</div>
+              <div class="card-main">
+                <ul>
+                  <li>
+                    Structured <strong>Streamlit</strong> dashboard with theming
+                  </li>
+                  <li>
+                    Custom <strong>MapboxGL</strong> container embedded as HTML
+                  </li>
+                  <li>
+                    Landsat LST &rarr; hexified via <strong>tobler</strong>
+                  </li>
+                  <li>Global &amp; per-hex <strong>LST indicators</strong></li>
+                  <li>
+                    <strong>Mapbox Draw</strong> polygons talking to
+                    <strong>FastAPI</strong>
+                  </li>
+                </ul>
+              </div>
+            </div>
+            <div class="card">
+              <div class="card-title">Where to go next</div>
+              <div class="card-main">
+                <ul>
+                  <li>Implement raster edits inside drawn polygons</li>
+                  <li>Recompute indicators live based on changed areas</li>
+                  <li>Add more KPIs (heat stress, housing, water, etc.)</li>
+                  <li>Turn this into a reusable teaching template</li>
+                </ul>
+              </div>
+            </div>
+          </div>
+
+
+
+          <aside class="notes">
+            Closing slide recap the entire tutorial: - Initialization: folder,
+            Git, initial files. - Virtual environment with uv and dependencies.
+            - Streamlit config, secrets, and skeleton structure. - Map container
+            with MapboxGL (3D buildings, custom style). - Data pipeline
+            (download LST, read boundary, rasters). - Hexagon creation with
+            tobler, zonal statistics with rasterio. - Indicators with
+            `st.metric` and layout. - Slider to control hexagon resolution. -
+            Mapbox Draw integration for polygon drawing. - FastAPI service to
+            receive polygons, plus CORS setup. - Future work: editing raster
+            inside polygons and updating indicators, plus more digital-twin-like
+            indicators. Encourage participants to: - Fork the repo. - Swap the
+            city and data sources. - Extend the dashboard with their own
+            indicators and map layers.
+          </aside>
+        </section>
+        <!-- Your turn slide -->
+        <section data-auto-animate>
+          <h2>🚀 Your turn!</h2>
+          <div>
+            <div class="pill">
+              <span class="icon">💡</span><span>Challenge</span>
+            </div>
+            <div class="card-grid-2">
+                <div class="card">
+                <div class="card-title">Challenge</div>                    
+                <div class="card-main">
+                            <ul>
+                                <li>
+                                    Include a new dataset (<strong>raster</strong> or
+                                    <strong>vector</strong>)
+                                </li>
+                                <li>Add <strong>TWO</strong> new indicators</li>
+                                <li>Add <strong>ONE</strong> widget</li>
+                                <li>Add <strong>ONE</strong> chart</li>
+                            </ul>
+</div>
+                </div>
+            </div>
+        </div>
+          
+
+          <p class="subtitle" style="margin-top: 2rem"><strong>Good luck!</strong> 💻🌍</p>
+
+          <aside class="notes">
+            <p>
+              Now that you have a working dashboard, you can start to add more
+              indicators and data to it.
+            </p>
+            <p>
+              Your task is to do the following: include a new dataset (raster or
+              vector), add two new indicators, add one widget, and add one
+              chart. Good luck!
+            </p>
+          </aside>
+        </section>
+      </div>
+      <div class="slide-footer">
+        University of Twente | UF - ITC | Iván Cárdenas León
+      </div>
+    </div>
+
+    <!-- Reveal.js scripts -->
+    <script src="https://unpkg.com/reveal.js/dist/reveal.js"></script>
+    <script src="https://unpkg.com/reveal.js/plugin/notes/notes.js"></script>
+    <script src="https://unpkg.com/reveal.js/plugin/highlight/highlight.js"></script>
+
+    <script>
+      Reveal.initialize({
+        hash: true,
+        slideNumber: "c/t",
+        transition: "slide",
+        plugins: [RevealNotes, RevealHighlight],
+      });
+    </script>
+  </body>
+</html>

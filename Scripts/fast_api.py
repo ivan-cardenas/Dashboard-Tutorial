@@ -4,6 +4,8 @@ from fastapi.middleware.cors import CORSMiddleware
 from typing import Any, Dict
 import uvicorn
 
+from raster_processing import edit_raster_polygon
+
 app = FastAPI()
 
 # Enable CORS
@@ -22,8 +24,14 @@ class GeoJSONFeature(BaseModel):
 
 @app.post("/polygon")
 async def receive_polygon(feature: GeoJSONFeature):
-    print("Polygon received:", feature)
-    return {"status": "ok", "received": feature}
+    output_raster, stats = edit_raster_polygon(feature.dict(),
+                                        raster_path="data/LST_Enschede.tif",
+                                        out_path="data/LST_Enschede_modified.tif",
+                                        mode="add",
+                                        add_value=3                                   
+                                        )
+    print("Polygon received:", feature, "Output raster:", stats)
+    return {"status": "ok", "output": output_raster}
 
 if __name__ == "__main__":
     uvicorn.run("fast_api:app", host="0.0.0.0", port=8000, reload=True)
