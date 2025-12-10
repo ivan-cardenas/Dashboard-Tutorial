@@ -8,7 +8,7 @@
 ![License: MIT](https://img.shields.io/badge/License-MIT-yellow)
 
 This repository contains all materials for the **Digital Twin Dashboard Lecture**, developed for the  
-**University of Twente — ITC Faculty**, by **Iván Cárdenas León** [<img src="https://upload.wikimedia.org/wikipedia/commons/8/81/LinkedIn_icon.svg" height="20"/>](https://www.linkedin.com/in/icmaps/) [<img src="https://upload.wikimedia.org/wikipedia/commons/0/06/ORCID_iD.svg" height="20"/>](https://orcid.org/0009-0005-0245-633X)
+**University of Twente — ITC Faculty**, by **Iván Cárdenas León** [<img src="https://upload.wikimedia.org/wikipedia/commons/8/81/LinkedIn_icon.svg" height="20"/>](https://www.linkedin.com/in/ivancardenasleon/) [<img src="https://upload.wikimedia.org/wikipedia/commons/0/06/ORCID_iD.svg" height="20"/>](https://orcid.org/0009-0005-0245-633X)
 
 Contact: **[Send email](i.cardenasleon@utwente.nl)**
 
