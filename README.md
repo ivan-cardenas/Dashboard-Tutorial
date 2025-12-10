@@ -10,7 +10,7 @@
 This repository contains all materials for the **Digital Twin Dashboard Lecture**, developed for the  
 **University of Twente — ITC Faculty**, by **Iván Cárdenas León** [<img src="https://upload.wikimedia.org/wikipedia/commons/8/81/LinkedIn_icon.svg" height="20"/>](https://www.linkedin.com/in/icmaps/) [<img src="https://upload.wikimedia.org/wikipedia/commons/0/06/ORCID_iD.svg" height="20"/>](https://orcid.org/0009-0005-0245-633X)
 
-Contact: **i.cardenasleon[at]utwente.nl**
+Contact: **[Send email](i.cardenasleon@utwente.nl)**
 
 ---
 
@@ -21,7 +21,7 @@ Contact: **i.cardenasleon[at]utwente.nl**
 @misc{Cardenas-Leon_Urban_Indicators_Dataset,
 author = {Cardenas-Leon, Ivan}
 title = {{Digital Twin Dashboard Workshop}},
-url = {}
+url = {https://ivan-cardenas.github.io/Dashboard-Tutorial/}
 }
 ~~~
 ---
