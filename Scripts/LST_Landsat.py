@@ -1,8 +1,9 @@
 import ee
 import geemap
 import geopandas as gpd
+import streamlit as st
 ee.Authenticate()
-ee.Initialize(project='ee-cygnus26') # change to your project name
+ee.Initialize(project=st.secrets["GEE_PROJECT"])
 print(ee.String('Hello from the Earth Engine servers!').getInfo())
 
 # ---------------------------
