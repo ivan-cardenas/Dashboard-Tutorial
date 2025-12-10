@@ -1,0 +1,52 @@
+# This CITATION.cff file was generated with cffinit.
+# Visit https://bit.ly/cffinit to generate yours today!
+
+cff-version: 1.2.0
+title: Digital Twin Dashboard Workshop
+message: >-
+  If you use this software, please cite it using the
+  metadata from this file.
+type: software
+authors:
+  - given-names: Ivan
+    family-names: Cardenas-Leon
+    email: i.l.cardenasleon@utwente.nl
+    name-particle: IL
+    affiliation: University of Twente
+    orcid: 'https://orcid.org/0009-0005-0245-633X'
+repository-code: 'https://github.com/ivan-cardenas/Dashboard-Tutorial'
+url: 'https://ivan-cardenas.github.io/Dashboard-Tutorial/'
+abstract: >-
+  This repository provides a complete, instructional
+  framework for building an interactive Urban Digital Twin
+  Dashboard using open-source geospatial tools and modern
+  web technologies. Designed for teaching and demonstration
+  purposes at the University of Twente — ITC Faculty, it
+  integrates a Streamlit frontend, a MapboxGL JS 3D mapping
+  environment, and a FastAPI backend to create a lightweight
+  yet extensible digital-twin architecture. The workflow
+  guides users through downloading and processing Landsat 9
+  Land Surface Temperature (LST) data, converting rasters to
+  H3 hexagonal grids using Tobler, computing zonal
+  statistics, and visualizing results as dynamic 3D
+  extrusions. The platform also enables real-time polygon
+  drawing on the map and backend communication for custom
+  spatial analyses.
+
+
+  By combining data processing, visualization, and
+  interactive web components, the repository serves both as
+  a learning environment and a modular template for
+  prototyping urban-analytics dashboards. Participants
+  extend the system through exercises that introduce new
+  datasets, indicators, widgets, and visualizations,
+  fostering hands-on understanding of geospatial
+  digital-twin concepts and toolchains.
+keywords:
+  - Digital Twin
+  - Urban Analytics
+  - Streamlit Dashboard
+  - Geospatial visualization
+  - Interactive Mapping
+license: CC-BY-NC-SA-4.0
+license-url: 'https://creativecommons.org/licenses/by-nc-sa/4.0/'
