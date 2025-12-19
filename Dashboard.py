@@ -27,7 +27,7 @@ st.set_page_config(
 # ===========================================================================
 # FUNCTIONS
 # ===========================================================================
-
+@st.cache_data
 def load_data(city:str, path:str):
     city_bounds =get_city_boundary(city)
     lst = generate_LST(city_bounds)
@@ -96,6 +96,10 @@ with open("./Map_Lecture.html", 'r', encoding="utf-8") as f:
 with st.sidebar:
     st.markdown("## Parameters")
     hex_res = st.slider("Select resolution", 1, 12, 8, key="resolution")
+    if hex_res:
+        with st.spinner("Loading hexagons..."):
+            hexes = create_hexagons(CITY_BOUNDARY, hex_res)
+            HEXAGONS = calculate_stats("./data/LST_Enschede.tif", hexes, "mean").to_json()
 
 
 
