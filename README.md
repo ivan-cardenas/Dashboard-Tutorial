@@ -1,7 +1,7 @@
 # 🌍 Digital Twin Dashboard Workshop  
 ### Streamlit · MapboxGL · Landsat LST · FastAPI · Hexagons · Urban Analytics · Digital Twin
 
-[![DOI](https://zenodo.org/badge/1107580356.svg)](https://doi.org/10.5281/zenodo.18144984)
+![![DOI](https://zenodo.org/badge/1107580356.svg)](https://doi.org/10.5281/zenodo.18144984)
 ![Python](https://img.shields.io/badge/Python-3.10+-blue?logo=python)
 ![Streamlit](https://img.shields.io/badge/Streamlit-App-red?logo=streamlit)
 ![Mapbox](https://img.shields.io/badge/Mapbox-GL%20JS-3A9BDC?logo=mapbox)
@@ -145,13 +145,14 @@ uv run fast_api.py
 Open:
 
 ```
-Lecture.html
+Index.html
 ```
 
 Keyboard shortcuts:
 
 - **S** — presenter mode  
 - **F** — fullscreen  
-- **?** — help  
+- **?** — help
+- **ESC** — slide overview  
 
 ---
