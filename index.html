@@ -9,48 +9,52 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
     <!-- Reveal.js core -->
-    <link rel="stylesheet" href="https://unpkg.com/reveal.js/dist/reveal.css" />
+    <link rel="stylesheet" href="https://unpkg.com/reveal.js@4.6.1/dist/reveal.css" />
     <link
       rel="stylesheet"
-      href="https://unpkg.com/reveal.js/dist/theme/black.css"
+      href="https://unpkg.com/reveal.js@4.6.1/dist/theme/black.css"
       id="theme"
     />
 
     <!-- Syntax highlighting -->
     <link
       rel="stylesheet"
-      href="https://unpkg.com/reveal.js/plugin/highlight/monokai.css"
+      href="https://unpkg.com/reveal.js@4.6.1/plugin/highlight/monokai.css"
     />
 
-    <!-- Playful techy custom styling -->
+    <!-- Inter font -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap"
+    />
+
     <style>
       :root {
-        --accent: #3b80cf;
-        --accent-soft: rgba(59, 128, 207, 0.2);
-        --bg-main: radial-gradient(
-          circle at top left,
-          #243b53 0%,
-          #0b1020 40%,
-          #05060b 100%
-        );
-        --card-bg: rgba(10, 12, 24, 0.92);
-        --border-soft: rgba(255, 255, 255, 0.1);
-        --muted: #a9b3c1;
-        --good: #32b318;
-        --warn: #ffcd00;
-        --error: #ff5f6c;
-        --code-bg: #111827;
+        --accent:       #4d8ef0;
+        --accent-soft:  rgba(77, 142, 240, 0.1);
+        --bg:           #0d0e12;
+        --surface:      #13141a;
+        --surface-2:    #1a1b22;
+        --border:       rgba(255, 255, 255, 0.07);
+        --text:         #e2e2e8;
+        --muted:        #6e6e82;
+        --good:         #4abe7a;
+        --warn:         #d9913a;
+        --error:        #e05568;
+        --code-bg:      #0a0b0e;
+        --radius:       0.375rem;
       }
 
       body {
-        background: #05060b;
-        font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI",
-          sans-serif;
+        background: var(--bg);
+        font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
       }
 
       .reveal {
-        background-image: var(--bg-main);
-        background-size: cover;
+        background: var(--bg);
+        color: var(--text);
       }
 
       .reveal .slides {
@@ -60,81 +64,96 @@
       .reveal h1,
       .reveal h2,
       .reveal h3 {
-        font-weight: 700;
-        letter-spacing: 0.03em;
+        font-family: 'Inter', system-ui, sans-serif;
+        font-weight: 600;
+        letter-spacing: -0.02em;
+        color: var(--text);
+        text-transform: none;
       }
 
-      .reveal h1 {
-        font-size: 2.6rem;
+      .reveal h1 { font-size: 2.3rem; }
+      .reveal h2 { font-size: 1.75rem; }
+      .reveal h3 { font-size: 1.25rem; }
+
+      .reveal p,
+      .reveal li,
+      .reveal .card-main {
+        font-family: 'Inter', system-ui, sans-serif;
+        line-height: 1.7;
       }
 
-      .reveal h2 {
-        font-size: 2rem;
-      }
+      .reveal ul { margin-left: 1.1em; }
+      .reveal li  { margin-bottom: 0.15rem; }
 
-      .reveal h3 {
-        font-size: 1.5rem;
+      .reveal code {
+        background: var(--surface-2);
+        border-radius: 0.25rem;
+        padding: 0.05em 0.32em;
+        font-family: 'JetBrains Mono', 'Fira Code', monospace;
+        font-size: 0.84em;
+        color: var(--accent);
       }
 
       .subtitle {
         color: var(--muted);
-        font-size: 1rem;
+        font-size: 0.95rem;
         margin-top: 0.4rem;
+        line-height: 1.65;
       }
 
+      /* ── Section label pill ── */
       .pill {
         display: inline-flex;
         align-items: center;
-        gap: 0.4rem;
-        padding: 0.25rem 0.7rem;
+        gap: 0.35rem;
+        padding: 0.18rem 0.6rem;
         border-radius: 999px;
-        border: 1px solid var(--border-soft);
-        background: rgba(0, 0, 0, 0.35);
-        font-size: 0.7rem;
+        border: 1px solid var(--border);
+        font-size: 0.62rem;
         text-transform: uppercase;
-        letter-spacing: 0.11em;
+        letter-spacing: 0.1em;
         color: var(--muted);
+        margin-bottom: 0.5rem;
       }
 
-      .pill span.icon {
-        font-size: 0.95rem;
-      }
+      .pill span.icon { font-size: 0.85rem; }
 
+      /* ── Cards ── */
       .card {
-        background: var(--card-bg);
-        border-radius: 1.1rem;
-        padding: 1rem 1.2rem;
-        border: 1px solid var(--border-soft);
-        box-shadow: 0 18px 55px rgba(0, 0, 0, 0.6);
+        background: var(--surface);
+        border-radius: var(--radius);
+        padding: 1rem 1.15rem;
+        border: 1px solid var(--border);
       }
 
       .card-grid {
         display: grid;
         grid-template-columns: repeat(3, minmax(0, 1fr));
-        gap: 1rem;
-        margin-top: 1.2rem;
+        gap: 0.75rem;
+        margin-top: 1rem;
       }
 
       .card-grid-2 {
         display: grid;
         grid-template-columns: repeat(2, minmax(0, 1fr));
-        gap: 1rem;
-        margin-top: 1.2rem;
+        gap: 0.75rem;
+        margin-top: 1rem;
       }
 
       .card-title {
-        font-size: 0.9rem;
+        font-size: 0.62rem;
         font-weight: 600;
         text-transform: uppercase;
-        letter-spacing: 0.12em;
+        letter-spacing: 0.1em;
         color: var(--muted);
-        margin-bottom: 0.4rem;
+        margin-bottom: 0.5rem;
       }
 
       .card-main {
-        font-size: 1rem;
+        font-size: 0.92rem;
       }
 
+      /* ── Tags ── */
       .tag-row {
         display: flex;
         flex-wrap: wrap;
@@ -143,157 +162,155 @@
       }
 
       .tag {
-        font-size: 0.7rem;
-        padding: 0.15rem 0.55rem;
+        font-size: 0.66rem;
+        padding: 0.15rem 0.5rem;
         border-radius: 999px;
-        border: 1px solid var(--border-soft);
-        background: rgba(255, 255, 255, 0.02);
+        border: 1px solid var(--border);
         color: var(--muted);
       }
 
+      /* ── Diagram block ── */
       .diagram {
-        border-radius: 1.2rem;
-        border: 1px dashed rgba(255, 255, 255, 0.3);
-        padding: 0.9rem 1.1rem;
-        font-size: 0.95rem;
-        line-height: 1.5;
-        background: radial-gradient(
-          circle at top left,
-          rgba(59, 128, 207, 0.2),
-          transparent 55%
-        );
+        border-radius: var(--radius);
+        border-left: 2px solid var(--accent);
+        padding: 0.8rem 1rem;
+        font-size: 0.88rem;
+        line-height: 1.7;
+        background: var(--accent-soft);
         margin-top: 1rem;
       }
 
-      .diagram strong {
-        color: var(--accent);
-      }
+      .diagram strong { color: var(--accent); }
 
+      .arrow { color: var(--accent); }
+
+      /* ── Timeline ── */
       .timeline {
-        border-left: 2px solid var(--accent-soft);
+        border-left: 1px solid var(--border);
         margin-top: 1rem;
-        padding-left: 0.9rem;
+        padding-left: 1rem;
       }
 
       .timeline-item {
-        margin-bottom: 0.7rem;
+        margin-bottom: 0.8rem;
         position: relative;
       }
 
       .timeline-dot {
         position: absolute;
-        left: -1.18rem;
-        top: 0.25rem;
-        width: 0.6rem;
-        height: 0.6rem;
+        left: -1.32rem;
+        top: 0.35rem;
+        width: 0.45rem;
+        height: 0.45rem;
         border-radius: 999px;
         background: var(--accent);
-        box-shadow: 0 0 0 6px rgba(59, 128, 207, 0.35);
       }
 
       .timeline-label {
-        font-size: 0.8rem;
+        font-size: 0.62rem;
         text-transform: uppercase;
-        letter-spacing: 0.09em;
+        letter-spacing: 0.08em;
         color: var(--muted);
         margin-bottom: 0.1rem;
       }
 
       .timeline-body {
-        font-size: 0.95rem;
+        font-size: 0.9rem;
+        line-height: 1.65;
       }
 
+      /* ── Code blocks ── */
       .reveal pre code {
         max-height: 460px;
         background: var(--code-bg);
-        border-radius: 0.8rem;
+        border-radius: var(--radius);
         padding: 0.9rem 1rem;
-        font-size: 0.8rem;
-        line-height: 1.5;
-        border: 1px solid rgba(255, 255, 255, 0.05);
+        font-size: 0.76rem;
+        line-height: 1.55;
+        border: 1px solid var(--border);
+        font-family: 'JetBrains Mono', 'Fira Code', monospace;
       }
 
       .code-label {
         display: inline-flex;
         align-items: center;
-        gap: 0.4rem;
-        font-size: 0.7rem;
+        gap: 0.35rem;
+        font-size: 0.62rem;
         text-transform: uppercase;
-        letter-spacing: 0.12em;
+        letter-spacing: 0.1em;
         color: var(--muted);
-        margin-bottom: 0.4rem;
+        margin-bottom: 0.35rem;
       }
 
-      .code-label span.icon {
-        font-size: 0.9rem;
-      }
+      .code-label span.icon { font-size: 0.85rem; }
 
+      /* ── Metric cards ── */
       .metrics-row {
         display: flex;
         flex-wrap: wrap;
-        gap: 1rem;
-        margin-top: 1rem;
+        gap: 0.75rem;
+        margin-top: 0.75rem;
       }
 
       .metric-card {
         flex: 1 1 0;
-        min-width: 170px;
-        border-radius: 1rem;
-        background: linear-gradient(
-          135deg,
-          rgba(50, 179, 24, 0.2),
-          rgba(9, 12, 24, 0.9)
-        );
-        border: 1px solid rgba(50, 179, 24, 0.3);
-        padding: 0.8rem 0.9rem;
+        min-width: 140px;
+        border-radius: var(--radius);
+        background: var(--surface-2);
+        border: 1px solid var(--border);
+        border-left: 2px solid var(--accent);
+        padding: 0.7rem 0.9rem;
       }
 
       .metric-label {
-        font-size: 0.8rem;
+        font-size: 0.62rem;
         text-transform: uppercase;
-        letter-spacing: 0.12em;
+        letter-spacing: 0.1em;
         color: var(--muted);
       }
 
       .metric-value {
-        font-size: 1.4rem;
+        font-size: 1.3rem;
         font-weight: 600;
+        color: var(--text);
+        line-height: 1.4;
       }
 
       .metric-delta {
-        font-size: 0.8rem;
+        font-size: 0.72rem;
         color: var(--good);
       }
 
-      .metric-delta.negative {
-        color: var(--error);
-      }
+      .metric-delta.negative { color: var(--error); }
 
+      /* ── Callout badges ── */
       .question-badge,
       .warning-badge {
-        display: inline-flex;
-        align-items: center;
-        gap: 0.6rem;
-        padding: 0.35rem 0.7rem;
-        border-radius: 999px;
-        font-size: 1.3rem;
-        text-transform: uppercase;
-        letter-spacing: 0.12em;
-        margin-top: 3rem;
+        display: flex;
+        align-items: flex-start;
+        gap: 0.55rem;
+        padding: 0.6rem 0.9rem;
+        border-radius: var(--radius);
+        font-size: 0.88rem;
+        margin-top: 1.2rem;
+        line-height: 1.55;
+        text-transform: none;
+        letter-spacing: 0;
       }
 
       .question-badge {
-        color: #fff;
-        background: rgba(59, 128, 207, 0.22);
-        border: 1px solid rgba(59, 128, 207, 0.5);
+        color: var(--text);
+        background: var(--accent-soft);
+        border: 1px solid rgba(77, 142, 240, 0.2);
       }
 
       .warning-badge {
-        color: #111;
-        background: rgba(255, 205, 0, 0.9);
-        border: 1px solid rgba(255, 205, 0, 1);
+        color: var(--text);
+        background: rgba(217, 145, 58, 0.09);
+        border: 1px solid rgba(217, 145, 58, 0.25);
       }
 
+      /* ── Fake slider ── */
       .slider-row {
         display: flex;
         gap: 1rem;
@@ -304,110 +321,104 @@
 
       .fake-slider {
         flex: 1 1 260px;
-        height: 32px;
+        height: 4px;
         border-radius: 999px;
-        background: linear-gradient(90deg, var(--accent), #32b318);
+        background: var(--surface-2);
+        border: 1px solid var(--border);
         position: relative;
-        box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.15);
       }
 
       .fake-slider-knob {
         position: absolute;
-        top: 3px;
+        top: -7px;
         left: 54%;
-        width: 26px;
-        height: 26px;
+        width: 18px;
+        height: 18px;
         border-radius: 999px;
-        background: #fff;
-        box-shadow: 0 6px 18px rgba(0, 0, 0, 0.5);
+        background: var(--accent);
       }
 
       .fake-slider-label {
-        font-size: 0.8rem;
+        font-size: 0.78rem;
         color: var(--muted);
       }
 
+      /* ── Badge ── */
       .badge {
         display: inline-flex;
         align-items: center;
         gap: 0.3rem;
-        padding: 0.3rem 0.6rem;
+        padding: 0.22rem 0.55rem;
         border-radius: 999px;
-        background: rgba(0, 0, 0, 0.5);
-        border: 1px solid var(--border-soft);
-        font-size: 0.65rem;
+        background: var(--surface-2);
+        border: 1px solid var(--border);
+        font-size: 0.62rem;
         text-transform: uppercase;
-        letter-spacing: 0.11em;
+        letter-spacing: 0.1em;
         color: var(--muted);
       }
 
+      /* ── Layout helpers ── */
       .layout-grid {
         display: grid;
         grid-template-columns: minmax(0, 1.4fr) minmax(0, 1fr);
-        gap: 1.2rem;
+        gap: 1rem;
         margin-top: 1rem;
       }
 
       .kv-row {
-        font-size: 0.9rem;
+        font-size: 0.88rem;
         display: flex;
         justify-content: space-between;
         gap: 0.8rem;
-        margin-bottom: 0.35rem;
+        margin-bottom: 0.3rem;
         color: var(--muted);
       }
 
-      .kv-row span.key {
-        opacity: 0.8;
-      }
-
-      .kv-row span.val {
-        color: #fff;
-        font-weight: 500;
-      }
+      .kv-row span.key { opacity: 0.8; }
+      .kv-row span.val { color: var(--text); font-weight: 500; }
 
       .flow-row {
         margin-top: 0.8rem;
-        font-size: 0.9rem;
+        font-size: 0.88rem;
         color: var(--muted);
+        line-height: 1.75;
       }
 
-      .flow-row span.arrow {
-        color: var(--accent);
-        padding: 0 0.3rem;
-      }
+      .flow-row span.arrow { color: var(--accent); padding: 0 0.3rem; }
 
       .footer-hint {
         position: absolute;
-        bottom: 1.3rem;
-        right: 1.6rem;
-        font-size: 0.65rem;
+        bottom: 1.2rem;
+        right: 1.5rem;
+        font-size: 0.6rem;
         text-transform: uppercase;
-        letter-spacing: 0.12em;
-        color: rgba(255, 255, 255, 0.45);
+        letter-spacing: 0.1em;
+        color: rgba(255, 255, 255, 0.22);
       }
 
-      .footer-hint span {
-        opacity: 0.6;
-        margin-left: 0.15rem;
-      }
+      .footer-hint span { opacity: 0.7; margin-left: 0.15rem; }
 
       .small {
-        font-size: 0.8rem;
+        font-size: 0.77rem;
         color: var(--muted);
+        line-height: 1.6;
       }
+
       .slide-footer {
         position: fixed;
         bottom: 0.5rem;
         left: 0;
         right: 0;
         text-align: center;
-        font-size: 1.2rem;
-        font-family: 'Lato', system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI",
-          sans-serif;
-        opacity: 0.75;
-        z-index: 30; /* above slides, below menus if any */
-        pointer-events: none; /* so clicks pass through */
+        font-size: 0.6rem;
+        font-family: 'Inter', system-ui, sans-serif;
+        color: var(--muted);
+        opacity: 0.4;
+        z-index: 30;
+        pointer-events: none;
+        text-transform: uppercase;
+        letter-spacing: 0.12em;
       }
     </style>
   </head>
@@ -2143,15 +2154,17 @@ async def receive_polygon(feature: GeoJSONFeature):
     </div>
 
     <!-- Reveal.js scripts -->
-    <script src="https://unpkg.com/reveal.js/dist/reveal.js"></script>
-    <script src="https://unpkg.com/reveal.js/plugin/notes/notes.js"></script>
-    <script src="https://unpkg.com/reveal.js/plugin/highlight/highlight.js"></script>
+    <script src="https://unpkg.com/reveal.js@4.6.1/dist/reveal.js"></script>
+    <script src="https://unpkg.com/reveal.js@4.6.1/plugin/notes/notes.js"></script>
+    <script src="https://unpkg.com/reveal.js@4.6.1/plugin/highlight/highlight.js"></script>
 
     <script>
       Reveal.initialize({
         hash: true,
         slideNumber: "c/t",
-        transition: "slide",
+        transition: "fade",
+        transitionSpeed: "fast",
+        controlsLayout: "edges",
         plugins: [RevealNotes, RevealHighlight],
       });
     </script>
